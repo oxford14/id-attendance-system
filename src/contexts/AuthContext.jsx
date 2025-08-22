@@ -155,6 +155,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const isAdmin = () => {
+    return user?.user_metadata?.role === 'admin'
+  };
+
   const value = {
     user,
     session,
@@ -163,7 +167,8 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     resetPassword,
-    updateProfile
+    updateProfile,
+    isAdmin
   };
 
   return (
