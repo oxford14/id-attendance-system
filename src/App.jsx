@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Navbar from './components/Navbar'
 import Login from './components/Login'
+import ResetPassword from './components/ResetPassword'
+import UpdatePassword from './components/UpdatePassword'
 import Dashboard from './components/Dashboard'
 import StudentManagement from './components/StudentManagement'
 import AttendanceScanner from './components/AttendanceScanner'
@@ -47,6 +49,16 @@ const AppContent = () => {
             <Route path="/login" element={
               <PublicRoute>
                 <Login />
+              </PublicRoute>
+            } />
+            <Route path="/reset-password" element={
+              <PublicRoute>
+                <ResetPassword />
+              </PublicRoute>
+            } />
+            <Route path="/update-password" element={
+              <PublicRoute>
+                <UpdatePassword />
               </PublicRoute>
             } />
 
