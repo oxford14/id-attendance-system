@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Trash2, Edit, Shield, Mail, Lock, User } from 'lucide-react'
 import { getUsersWithRoles, createUserAccount, deleteUserAccount } from '../lib/adminService'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 
 const UserManagement = () => {
   const [users, setUsers] = useState([])
