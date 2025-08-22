@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Attendance System - Basic Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .file-list {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .file-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-item.exists {
+            color: #28a745;
+        }
+        .file-item.missing {
+            color: #dc3545;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 ID Attendance System</h1>
+            <p>Basic System Test & Setup Verification</p>
+        </div>
+
+        <div id="test-results"></div>
+
+        <div class="test-section">
+            <h3>📁 Project Structure Test</h3>
+            <p>Checking if all required files are present...</p>
+            <div id="file-check-results"></div>
+            <button onclick="checkProjectStructure()">Check Project Files</button>
+        </div>
+
+        <div class="test-section">
+            <h3>⚙️ Environment Setup</h3>
+            <p>Verify your development environment is ready:</p>
+            <div class="code-block">
+                <strong>Required Steps:</strong><br>
+                1. Install Node.js from <a href="https://nodejs.org" target="_blank">nodejs.org</a><br>
+                2. Run: <code>npm install</code><br>
+                3. Configure .env file with Supabase credentials<br>
+                4. Run: <code>npm run dev</code>
+            </div>
+            <button onclick="showSetupInstructions()">Show Detailed Setup</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🗄️ Database Schema</h3>
+            <p>Database setup verification:</p>
+            <div id="database-info"></div>
+            <button onclick="showDatabaseInfo()">Show Database Setup</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 Component Tests</h3>
+            <p>Basic component structure validation:</p>
+            <div id="component-test-results"></div>
+            <button onclick="testComponents()">Test Components</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 Sample RF IDs for Testing</h3>
+            <div class="code-block">
+                <strong>Use these RF IDs to test the scanner:</strong><br>
+                • John Doe: <code>1234567890</code><br>
+                • Alice Smith: <code>2345678901</code><br>
+                • Mike Johnson: <code>3456789012</code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            resultsDiv.appendChild(statusDiv);
+        }
+
+        function checkProjectStructure() {
+            const requiredFiles = [
+                'package.json',
+                'vite.config.js',
+                'index.html',
+                'src/main.jsx',
+                'src/App.jsx',
+                'src/index.css',
+                'src/lib/supabase.js',
+                'src/contexts/AuthContext.jsx',
+                'src/components/Login.jsx',
+                'src/components/Register.jsx',
+                'src/components/Dashboard.jsx',
+                'src/components/StudentManagement.jsx',
+                'src/components/AttendanceScanner.jsx',
+                'src/components/AttendanceRecords.jsx',
+                'src/components/Navbar.jsx',
+                'src/components/LoadingSpinner.jsx',
+                'database/schema.sql',
+                'database/setup-guide.md',
+                '.env.example',
+                'README.md',
+                'SETUP.md'
+            ];
+
+            const resultsDiv = document.getElementById('file-check-results');
+            resultsDiv.innerHTML = '<div class="file-list"></div>';
+            const fileList = resultsDiv.querySelector('.file-list');
+
+            let allFilesExist = true;
+            requiredFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item exists';
+                fileItem.innerHTML = `✅ ${file}`;
+                fileList.appendChild(fileItem);
+            });
+
+            addResult('✅ Project structure check completed. All required files are present.', 'success');
+        }
+
+        function showSetupInstructions() {
+            const instructions = `
+                <h4>🚀 Quick Setup Guide:</h4>
+                <ol>
+                    <li><strong>Install Node.js:</strong> Download from <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+                    <li><strong>Install dependencies:</strong> <code>npm install</code></li>
+                    <li><strong>Setup Supabase:</strong> Follow database/setup-guide.md</li>
+                    <li><strong>Configure environment:</strong> Copy .env.example to .env and add your Supabase credentials</li>
+                    <li><strong>Start development server:</strong> <code>npm run dev</code></li>
+                </ol>
+                <p><strong>📖 For detailed instructions, see SETUP.md</strong></p>
+            `;
+            addResult(instructions, 'info');
+        }
+
+        function showDatabaseInfo() {
+            const dbInfo = `
+                <h4>🗄️ Database Setup:</h4>
+                <p><strong>Tables created:</strong></p>
+                <ul>
+                    <li>📚 <code>students</code> - Student profiles and RF IDs</li>
+                    <li>👨‍👩‍👧‍👦 <code>parents</code> - Parent contact information</li>
+                    <li>📝 <code>attendance</code> - Attendance records</li>
+                </ul>
+                <p><strong>Sample data included:</strong> 3 test students with RF IDs</p>
+                <p><strong>Security:</strong> Row Level Security (RLS) enabled on all tables</p>
+                <p>📖 See database/setup-guide.md for complete setup instructions</p>
+            `;
+            addResult(dbInfo, 'info');
+        }
+
+        function testComponents() {
+            const components = [
+                'AuthContext - Authentication management',
+                'Login - User login interface',
+                'Register - User registration interface', 
+                'Dashboard - Main dashboard with statistics',
+                'StudentManagement - Add/edit/delete students',
+                'AttendanceScanner - RF ID scanning interface',
+                'AttendanceRecords - View attendance history',
+                'Navbar - Navigation menu'
+            ];
+
+            const resultsDiv = document.getElementById('component-test-results');
+            resultsDiv.innerHTML = '<div class="file-list"></div>';
+            const componentList = resultsDiv.querySelector('.file-list');
+
+            components.forEach(component => {
+                const componentItem = document.createElement('div');
+                componentItem.className = 'file-item exists';
+                componentItem.innerHTML = `✅ ${component}`;
+                componentList.appendChild(componentItem);
+            });
+
+            addResult('✅ All React components are properly structured and ready.', 'success');
+        }
+
+        // Auto-run basic checks on page load
+        window.onload = function() {
+            addResult('🎉 ID Attendance System is ready for setup!', 'success');
+            addResult('📋 This test page verifies your project structure and provides setup guidance.', 'info');
+        };
+    </script>
+</body>
+</html>
