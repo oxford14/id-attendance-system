@@ -26,39 +26,41 @@ const Register = () => {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setLoading(true)
 
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long')
-      return
-    }
-
-    if (!formData.email || !formData.fullName) {
-      setError('Please fill in all required fields')
-      return
-    }
-
-    const { error } = await signUp(
-      formData.email, 
-      formData.password,
-      {
-        full_name: formData.fullName,
-        role: formData.role
+    try {
+      // Validation
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match')
+        return
       }
-    )
-    
-    if (error) {
-      setError(error.message)
-    } else {
-      setSuccess('Account created successfully! Please check your email to verify your account.')
-      setFormData({
-        email: '',
-        password: '',
+
+      if (formData.password.length < 6) {
+        setError('Password must be at least 6 characters long')
+        return
+      }
+
+      if (!formData.email || !formData.fullName) {
+        setError('Please fill in all required fields')
+        return
+      }
+
+      const { error } = await signUp(
+        formData.email, 
+        formData.password,
+        {
+          full_name: formData.fullName,
+          role: formData.role
+        }
+      )
+      
+      if (error) {
+        setError(error.message)
+      } else {
+        setSuccess('Account created successfully! Please check your email to verify your account.')
+        setFormData({
+          email: '',
+          password: '',
           confirmPassword: '',
           fullName: '',
           role: 'teacher'
