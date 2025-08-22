@@ -167,6 +167,28 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const updatePassword = async (newPassword) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Update password error:', error);
+      return { data: null, error };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   const updateProfile = async (updates) => {
     try {
       setLoading(true);
@@ -200,6 +222,7 @@ const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     resetPassword,
+    updatePassword,
     updateProfile,
     isAdmin
   };
