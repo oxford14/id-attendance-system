@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Trash2, Edit, Shield, Mail, Lock, User } from 'lucide-react'
-import { supabase } from '../lib/supabase'
+import { getUsersWithRoles, createUserAccount, deleteUserAccount } from '../lib/adminService'
 import { useAuth } from '../contexts/AuthContext'
 
 const UserManagement = () => {
@@ -24,19 +24,17 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      // Note: In a real implementation, you'd need to set up a users table
-      // and proper admin permissions in Supabase
-      const { data, error } = await supabase.auth.admin.listUsers()
+      const { data, error } = await getUsersWithRoles()
       
       if (error) {
-        console.error('Error fetching users:', error)
-        setError('Failed to fetch users')
-      } else {
-        setUsers(data.users || [])
+        setError('Failed to fetch users: ' + error.message)
+        return
       }
+      
+      setUsers(data || [])
     } catch (err) {
-      console.error('Error:', err)
-      setError('Failed to fetch users')
+      setError('An error occurred while fetching users')
+      console.error('Error fetching users:', err)
     } finally {
       setLoading(false)
     }
@@ -55,16 +53,12 @@ const UserManagement = () => {
     try {
       setLoading(true)
       
-      // Create user with Supabase Auth
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: formData.email,
-        password: formData.password,
-        user_metadata: {
-          full_name: formData.fullName,
-          role: formData.role
-        },
-        email_confirm: true
-      })
+      const { data, error } = await createUserAccount(
+        formData.email,
+        formData.password,
+        formData.role,
+        formData.fullName
+      )
 
       if (error) {
         throw error
@@ -83,23 +77,29 @@ const UserManagement = () => {
   }
 
   const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
+    if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return
     }
-
+    
     try {
       setLoading(true)
-      const { error } = await supabase.auth.admin.deleteUser(userId)
+      setError('')
       
-      if (error) {
-        throw error
+      const { success, error } = await deleteUserAccount(userId)
+      
+      if (!success) {
+        setError('Failed to delete user: ' + error.message)
+        return
       }
-
+      
       setSuccess('User deleted successfully!')
-      fetchUsers() // Refresh the users list
+      fetchUsers()
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
+      setError('An error occurred while deleting user')
       console.error('Error deleting user:', err)
-      setError(err.message || 'Failed to delete user')
     } finally {
       setLoading(false)
     }
@@ -276,10 +276,10 @@ const UserManagement = () => {
                     <td>
                       <span 
                         className={`badge ${
-                          userData.user_metadata?.role === 'admin' ? 'badge-primary' : 'badge-secondary'
+                          userData.role === 'admin' ? 'badge-primary' : 'badge-secondary'
                         }`}
                       >
-                        {userData.user_metadata?.role || 'user'}
+                        {userData.role || 'user'}
                       </span>
                     </td>
                     <td>{new Date(userData.created_at).toLocaleDateString()}</td>
