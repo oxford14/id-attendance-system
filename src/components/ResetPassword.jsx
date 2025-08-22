@@ -10,7 +10,6 @@ import { useAuth } from '../contexts/AuthContext'
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react'
 
 const ResetPassword = () => {
-  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
@@ -18,22 +17,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false)
   const { resetPassword } = useAuth()
 
-  // Check if we're in update mode (accessed via email link)
-  useEffect(() => {
-    const accessToken = searchParams.get('access_token')
-    const refreshToken = searchParams.get('refresh_token')
-    const type = searchParams.get('type')
-    
-    if (accessToken && refreshToken && type === 'recovery') {
-      // Redirect to update password page with the tokens
-      const params = new URLSearchParams({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        type: type
-      })
-      navigate(`/update-password?${params.toString()}`)
-    }
-  }, [searchParams, navigate])
+  // No need for token redirection logic since users go directly to UpdatePassword from email
 
   const handleSubmit = async (e) => {
     e.preventDefault()
