@@ -1,8 +1,7 @@
 -- ID Attendance System Database Schema
 -- Run this script in your Supabase SQL Editor
 
--- Enable Row Level Security
-ALTER TABLE auth.users ENABLE ROW LEVEL SECURITY;
+-- Note: auth.users table already has RLS enabled by default in Supabase
 
 -- Create students table
 CREATE TABLE IF NOT EXISTS students (
