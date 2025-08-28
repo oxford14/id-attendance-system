@@ -8,66 +8,54 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
-    role: 'teacher'
+    role: 'student'
   })
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const { signUp, loading } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const { signUp } = useAuth()
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setSuccess('')
     setLoading(true)
 
+    // Validation
+    if (!formData.email || !formData.password || !formData.confirmPassword) {
+      setError('Please fill in all fields')
+      setLoading(false)
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      setLoading(false)
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long')
+      setLoading(false)
+      return
+    }
+
     try {
-      // Validation
-      if (formData.password !== formData.confirmPassword) {
-        setError('Passwords do not match')
-        return
-      }
-
-      if (formData.password.length < 6) {
-        setError('Password must be at least 6 characters long')
-        return
-      }
-
-      if (!formData.email || !formData.fullName) {
-        setError('Please fill in all required fields')
-        return
-      }
-
-      const { error } = await signUp(
-        formData.email, 
-        formData.password,
-        {
-          full_name: formData.fullName,
-          role: formData.role
-        }
-      )
+      const { error } = await signUp(formData.email, formData.password, {
+        role: formData.role
+      })
       
       if (error) {
         setError(error.message)
-      } else {
-        setSuccess('Account created successfully! Please check your email to verify your account.')
-        setFormData({
-          email: '',
-          password: '',
-          confirmPassword: '',
-          fullName: '',
-          role: 'teacher'
-        })
       }
     } catch (err) {
-      setError('An unexpected error occurred')
+      setError('An error occurred during registration')
     } finally {
       setLoading(false)
     }
@@ -81,7 +69,7 @@ const Register = () => {
       justifyContent: 'center',
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     }}>
-      <div className="card" style={{ width: '100%', maxWidth: '450px', margin: '20px' }}>
+      <div className="card" style={{ width: '100%', maxWidth: '400px', margin: '20px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <UserPlus size={48} style={{ color: '#3b82f6', marginBottom: '16px' }} />
           <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
@@ -98,30 +86,7 @@ const Register = () => {
           </div>
         )}
 
-        {success && (
-          <div className="alert alert-success">
-            {success}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">
-              <User size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="fullName"
-              className="form-input"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="Enter your full name"
-              required
-              disabled={loading}
-            />
-          </div>
-
           <div className="form-group">
             <label className="form-label">
               <Mail size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
@@ -137,23 +102,6 @@ const Register = () => {
               required
               disabled={loading}
             />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Role
-            </label>
-            <select
-              name="role"
-              className="form-input"
-              value={formData.role}
-              onChange={handleChange}
-              required
-              disabled={loading}
-            >
-              <option value="teacher">Teacher</option>
-              <option value="admin">Administrator</option>
-            </select>
           </div>
 
           <div className="form-group">
@@ -190,6 +138,24 @@ const Register = () => {
             />
           </div>
 
+          <div className="form-group">
+            <label className="form-label">
+              <User size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+              Role
+            </label>
+            <select
+              name="role"
+              className="form-input"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="btn btn-primary"
@@ -200,16 +166,18 @@ const Register = () => {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ color: '#6b7280' }}>
-            Already have an account?{' '}
-            <Link 
-              to="/login" 
-              style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
-            >
-              Sign in here
-            </Link>
-          </p>
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <span style={{ color: '#6b7280' }}>Already have an account? </span>
+          <Link 
+            to="/login" 
+            style={{ 
+              color: '#3b82f6', 
+              textDecoration: 'none',
+              fontWeight: '500'
+            }}
+          >
+            Sign in here
+          </Link>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { db } from '../lib/supabase'
 import LoadingSpinner from './LoadingSpinner'
+import StudentEnrollment from './StudentEnrollment'
 import { Users, Plus, Edit, Trash2, Save, X, User } from 'lucide-react'
 
 const StudentManagement = () => {
@@ -9,6 +10,7 @@ const StudentManagement = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showEnrollmentForm, setShowEnrollmentForm] = useState(false)
   const [editingStudent, setEditingStudent] = useState(null)
   const [formData, setFormData] = useState({
     first_name: '',
@@ -181,7 +183,7 @@ const StudentManagement = () => {
         </div>
         
         <button
-          onClick={() => setShowAddForm(true)}
+          onClick={() => setShowEnrollmentForm(true)}
           className="btn btn-primary"
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
@@ -202,7 +204,23 @@ const StudentManagement = () => {
         </div>
       )}
 
-      {/* Add/Edit Form */}
+      {/* Student Enrollment Form */}
+      {showEnrollmentForm && (
+        <StudentEnrollment
+          onCancel={() => {
+            setShowEnrollmentForm(false)
+            setError('')
+            setSuccess('')
+          }}
+          onSuccess={() => {
+            setShowEnrollmentForm(false)
+            setSuccess('Student enrolled successfully!')
+            loadStudents()
+          }}
+        />
+      )}
+
+      {/* Quick Add/Edit Form */}
       {showAddForm && (
         <div className="card" style={{ marginBottom: '32px' }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
