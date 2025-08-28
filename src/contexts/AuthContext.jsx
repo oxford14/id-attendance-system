@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = async (email) => {
     try {
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo: `${window.location.origin}/update-password`
       });
 
       if (error) {
@@ -134,6 +134,28 @@ export const AuthProvider = ({ children }) => {
       return { data: null, error };
     }
   };
+
+  const updatePassword = async (newPassword) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Update password error:', error);
+      return { data: null, error };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   const updateProfile = async (updates) => {
     try {
@@ -155,6 +177,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const isAdmin = () => {
+    return user?.user_metadata?.role === 'admin'
+  };
+
   const value = {
     user,
     session,
@@ -163,7 +189,9 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     resetPassword,
-    updateProfile
+    updatePassword,
+    updateProfile,
+    isAdmin
   };
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { LogOut, Home, Users, Scan, FileText, Bell } from 'lucide-react'
+import { LogOut, Home, Users, Scan, FileText, Bell, Settings } from 'lucide-react'
 
 const Navbar = () => {
   const { user, signOut } = useAuth()
@@ -48,6 +48,14 @@ const Navbar = () => {
               <Bell size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
               Notifications
             </Link>
+            
+            {/* Admin only - User Management */}
+            {user?.user_metadata?.role === 'admin' && (
+              <Link to="/users" className={isActive('/users')}>
+                <Settings size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                User Management
+              </Link>
+            )}
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: '#6b7280', fontSize: '14px' }}>

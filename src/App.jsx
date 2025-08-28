@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Navbar from './components/Navbar'
 import Login from './components/Login'
-import Register from './components/Register'
+import ResetPassword from './components/ResetPassword'
+import UpdatePassword from './components/UpdatePassword'
 import Dashboard from './components/Dashboard'
 import StudentManagement from './components/StudentManagement'
 import AttendanceScanner from './components/AttendanceScanner'
 import AttendanceRecords from './components/AttendanceRecords'
 import NotificationSettings from './components/NotificationSettings'
+import UserManagement from './components/UserManagement'
 import LoadingSpinner from './components/LoadingSpinner'
 
 // Protected Route Component
@@ -49,11 +51,17 @@ const AppContent = () => {
                 <Login />
               </PublicRoute>
             } />
-            <Route path="/register" element={
+            <Route path="/reset-password" element={
               <PublicRoute>
-                <Register />
+                <ResetPassword />
               </PublicRoute>
             } />
+            <Route path="/update-password" element={
+              <PublicRoute>
+                <UpdatePassword />
+              </PublicRoute>
+            } />
+
             
             {/* Protected Routes */}
             <Route path="/" element={
@@ -84,6 +92,11 @@ const AppContent = () => {
             <Route path="/notifications" element={
               <ProtectedRoute>
                 <NotificationSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <UserManagement />
               </ProtectedRoute>
             } />
             

@@ -92,17 +92,20 @@ const Login = () => {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ color: '#6b7280' }}>
-            Don't have an account?{' '}
-            <Link 
-              to="/register" 
-              style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
-            >
-              Sign up here
-            </Link>
-          </p>
+        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+          <Link 
+            to="/reset-password" 
+            style={{ 
+              color: '#3b82f6', 
+              textDecoration: 'none',
+              fontSize: '14px'
+            }}
+          >
+            Forgot your password?
+          </Link>
         </div>
+
+
       </div>
     </div>
   )
