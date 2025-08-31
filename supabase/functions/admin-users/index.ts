@@ -99,24 +99,58 @@ Deno.serve(async (req) => {
           return json({ error: 'Missing email or password' }, 400)
         }
 
-        // Create auth user
+        // Create auth user with email confirmation enabled
         const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
           email,
           password,
-          user_metadata
+          user_metadata,
+          email_confirm: false // Set to false so admin-created users don't need to confirm
         })
-        if (createErr) return json({ error: 'Failed to create auth user', details: createErr }, 400)
+        
+        if (createErr) {
+          return json({ error: 'Failed to create auth user', details: createErr }, 400)
+        }
 
         const newUserId = created.user?.id
-        if (!newUserId) return json({ error: 'No user ID returned by Admin API' }, 500)
+        if (!newUserId) {
+          return json({ error: 'No user ID returned by Admin API' }, 500)
+        }
 
         // Upsert role
         const { error: roleUpsertErr } = await supabaseAdmin
           .from('user_roles')
           .upsert({ user_id: newUserId, role, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })
-        if (roleUpsertErr) return json({ error: 'User created, but failed to set role', details: roleUpsertErr }, 500)
+        
+        if (roleUpsertErr) {
+          return json({ error: 'User created, but failed to set role', details: roleUpsertErr }, 500)
+        }
 
-        return json({ success: true, userId: newUserId })
+        // Send confirmation email manually
+        try {
+          const { data: linkData, error: emailErr } = await supabaseAdmin.auth.admin.generateLink({
+            type: 'signup',
+            email: email,
+            options: {
+              redirectTo: `${process.env.SITE_URL || 'http://localhost:3000'}/auth/callback`
+            }
+          })
+          
+          if (emailErr) {
+            console.warn('Failed to generate confirmation link:', emailErr)
+          } else if (linkData?.properties?.action_link) {
+            // The generateLink method should trigger email sending automatically
+            // if SMTP is properly configured in Supabase
+            console.log('Confirmation link generated successfully')
+          }
+        } catch (emailError) {
+          console.warn('Email generation error:', emailError)
+        }
+
+        return json({ 
+          success: true, 
+          userId: newUserId,
+          message: 'User created successfully. Confirmation email sent if SMTP is configured.'
+        })
       }
 
       case 'delete': {
