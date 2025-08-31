@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"],
+    "types": ["https://deno.land/x/deploy@1.8.0/types/deploy.d.ts"]
+  }
+}

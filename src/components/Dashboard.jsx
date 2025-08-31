@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { db } from '../lib/supabase'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import LoadingSpinner from './LoadingSpinner'
 import TailwindTest from './TailwindTest'
 import { Users, UserCheck, Calendar, Clock, TrendingUp, BarChart3 } from 'lucide-react'

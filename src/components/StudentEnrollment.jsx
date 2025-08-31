@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Mail, Lock, Calendar, MapPin, Phone, GraduationCap, Users, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const StudentEnrollment = ({ onCancel, onSuccess }) => {
   const { register } = useAuth();
