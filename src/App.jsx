@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import AuthProvider from './contexts/AuthContext'
+import StudentProvider from './contexts/StudentContext'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
 import Login from './components/Login'
@@ -124,11 +125,13 @@ const AppContent = () => {
   )
 }
 
-// Main App Component with AuthProvider
+// Main App Component with AuthProvider and StudentProvider
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <StudentProvider>
+        <AppContent />
+      </StudentProvider>
     </AuthProvider>
   )
 }
