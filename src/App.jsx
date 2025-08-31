@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import AuthProvider from './contexts/AuthContextProvider'
+import AuthProvider from './contexts/AuthContext'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
 import Login from './components/Login'
@@ -11,6 +11,7 @@ import StudentManagement from './components/StudentManagement'
 import AttendanceScanner from './components/AttendanceScanner'
 import AttendanceRecords from './components/AttendanceRecords'
 import NotificationSettings from './components/NotificationSettings'
+import StudentEnrollment from './components/StudentEnrollment'
 import UserManagement from './components/UserManagement'
 import LoadingSpinner from './components/LoadingSpinner'
 
@@ -93,6 +94,11 @@ const AppContent = () => {
             <Route path="/notifications" element={
               <ProtectedRoute>
                 <NotificationSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/enroll" element={
+              <ProtectedRoute>
+                <StudentEnrollment />
               </ProtectedRoute>
             } />
             <Route path="/users" element={

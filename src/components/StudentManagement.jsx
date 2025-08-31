@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { db } from '../lib/supabase'
 import LoadingSpinner from './LoadingSpinner'
 import StudentEnrollment from './StudentEnrollment'
 import { Users, Plus, Edit, Trash2, Save, X, User } from 'lucide-react'
 
 const StudentManagement = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -183,7 +185,7 @@ const StudentManagement = () => {
         </div>
         
         <button
-          onClick={() => setShowEnrollmentForm(true)}
+          onClick={() => navigate('/enroll')}
           className="btn btn-primary"
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >

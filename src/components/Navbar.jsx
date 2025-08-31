@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { LogOut, Home, Users, Scan, FileText, Bell, Settings } from 'lucide-react'
 
 const Navbar = () => {
-  const { user, signOut } = useAuth()
+  const { user, userRole, signOut } = useAuth()
   const location = useLocation()
 
   const isActive = (path) => {
@@ -49,7 +49,9 @@ const Navbar = () => {
               Notifications
             </Link>
             
-            <Link to="/users" className={isActive('/users')}>
+            {/* Admin only - User Management */}
+            {userRole === 'admin' && (
+              <Link to="/users" className={isActive('/users')}>
                 <Settings size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                 User Management
               </Link>

@@ -1,35 +1,33 @@
 import React, { useState } from 'react';
-import { User, Mail, Lock, Calendar, MapPin, Phone, GraduationCap, Users, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from "../hooks/useAuth";
+import { supabase } from '../lib/supabase';
+import { User, Mail, Calendar, MapPin, Phone, GraduationCap, Users } from 'lucide-react';
 
 const StudentEnrollment = ({ onCancel, onSuccess }) => {
-  const { register } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [copyAddress, setCopyAddress] = useState(false);
 
   const [formData, setFormData] = useState({
-    // Account Information
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'student',
-    
     // Learner Information
+    email: '',
+    role: 'student',
+    lrn: '',
     lastName: '',
     firstName: '',
     middleName: '',
     extensionName: '',
-    lrn: '',
+    contactNo: '',
     birthDate: '',
     age: '',
     sex: '',
     motherTongue: '',
-    ipEthnicGroup: '',
-    religion: '',
+    belongsToIpCommunity: false,
+    ipCommunityName: '',
+    is4psBeneficiary: false,
+    fourPsHouseholdId: '',
+    placeOfBirth: '',
     
     // Current Address
     currentHouseNo: '',
@@ -124,16 +122,8 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
 
   const validateForm = () => {
     // Basic validation
-    if (!formData.email || !formData.password || !formData.confirmPassword) {
-      return 'Please fill in all required account fields.';
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      return 'Passwords do not match.';
-    }
-    
-    if (formData.password.length < 6) {
-      return 'Password must be at least 6 characters long.';
+    if (!formData.email || !formData.firstName || !formData.lastName || !formData.contactNo) {
+      return 'Please fill in all required fields.';
     }
     
     // Email validation
@@ -170,7 +160,63 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
     setLoading(true);
     
     try {
-      await register(formData.email, formData.password, formData.role, formData);
+      const {
+        data,
+        error
+      } = await supabase.from('student_profile').insert([{
+        learner_reference_number: formData.lrn,
+        last_name: formData.lastName,
+        first_name: formData.firstName,
+        middle_name: formData.middleName,
+        extension_name: formData.extensionName,
+        birthdate: formData.birthDate,
+        age: formData.age,
+        sex: formData.sex,
+        mother_tongue: formData.motherTongue,
+        email_address: formData.email,
+        phone_number: formData.contactNo,
+        current_house_number: formData.currentHouseNo,
+        current_sitio_street: formData.currentStreet,
+        current_barangay: formData.currentBarangay,
+        current_municipality_city: formData.currentMunicipality,
+        current_province: formData.currentProvince,
+        current_country: formData.currentCountry,
+        current_zip_code: formData.currentZipCode,
+        permanent_house_number: formData.permanentHouseNo,
+        permanent_street: formData.permanentStreet,
+        permanent_barangay: formData.permanentBarangay,
+        permanent_municipality_city: formData.permanentMunicipality,
+        permanent_province: formData.permanentProvince,
+        permanent_country: formData.permanentCountry,
+        permanent_zip_code: formData.permanentZipCode,
+        same_as_current_address: copyAddress,
+        place_of_birth_municipality_city: formData.placeOfBirth,
+        belongs_to_ip_community: formData.belongsToIpCommunity,
+        ip_community_name: formData.ipCommunityName,
+        is_4ps_beneficiary: formData.is4psBeneficiary,
+        four_ps_household_id: formData.fourPsHouseholdId,
+        father_last_name: formData.fatherLastName,
+        father_first_name: formData.fatherFirstName,
+        father_middle_name: formData.fatherMiddleName,
+        father_contact_number: formData.fatherContactNo,
+        mother_last_name: formData.motherLastName,
+        mother_first_name: formData.motherFirstName,
+        mother_middle_name: formData.motherMiddleName,
+        mother_contact_number: formData.motherContactNo,
+        guardian_last_name: formData.guardianLastName,
+        guardian_first_name: formData.guardianFirstName,
+        guardian_middle_name: formData.guardianMiddleName,
+        guardian_contact_number: formData.guardianContactNo,
+        last_grade_level_completed: formData.lastGradeLevel,
+        last_school_year_completed: formData.lastSchoolYear,
+        last_school_attended: formData.lastSchoolName,
+        last_school_id: formData.lastSchoolId,
+      }]);
+
+      if (error) {
+        throw error;
+      }
+
       setSuccess('Student enrolled successfully!');
       setTimeout(() => {
         if (onSuccess) onSuccess();
@@ -207,100 +253,6 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               </div>
             )}
             
-            {/* Account Information */}
-            <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
-              <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
-                <User className="w-7 h-7 text-primary-600" />
-                Account Information
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address *
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter email address"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Role
-                  </label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors placeholder-gray-400"
-                  >
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password *
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter password"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm Password *
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Confirm password"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
             {/* Learner Information */}
             <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
@@ -309,6 +261,21 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Learner Reference Number (LRN)
+                  </label>
+                  <input
+                    type="text"
+                    name="lrn"
+                    value={formData.lrn}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="12-digit LRN"
+                    maxLength="12"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Last Name *
@@ -366,20 +333,41 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     placeholder="Jr., Sr., III, etc."
                   />
                 </div>
+
+                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Contact Number *
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="tel"
+                      name="contactNo"
+                      value={formData.contactNo}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter contact number"
+                      required
+                    />
+                  </div>
+                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Learner Reference Number (LRN)
+                    Email Address *
                   </label>
-                  <input
-                    type="text"
-                    name="lrn"
-                    value={formData.lrn}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="12-digit LRN"
-                    maxLength="12"
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter email address"
+                      required
+                    />
+                  </div>
                 </div>
                 
                 <div>
@@ -416,6 +404,20 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Place of Birth (Municipality/City)
+                  </label>
+                  <input
+                    type="text"
+                    name="placeOfBirth"
+                    value={formData.placeOfBirth}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter place of birth"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Sex *
                   </label>
                   <select
@@ -444,33 +446,97 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     placeholder="Enter mother tongue"
                   />
                 </div>
-                
-                <div>
+
+                {/* IP Community */}
+                <div className="col-span-1 md:col-span-2 lg:col-span-3">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    IP/Ethnic Group
+                    Belonging to any Indigenous Peoples (IP) Community/Indigenous Cultural Community
                   </label>
-                  <input
-                    type="text"
-                    name="ipEthnicGroup"
-                    value={formData.ipEthnicGroup}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter IP/ethnic group"
-                  />
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="belongsToIpCommunity"
+                        value="yes"
+                        checked={formData.belongsToIpCommunity === true}
+                        onChange={() => setFormData(prev => ({ ...prev, belongsToIpCommunity: true }))}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Yes</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="belongsToIpCommunity"
+                        value="no"
+                        checked={formData.belongsToIpCommunity === false}
+                        onChange={() => setFormData(prev => ({ ...prev, belongsToIpCommunity: false, ipCommunityName: '' }))}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">No</span>
+                    </label>
+                  </div>
+                  {formData.belongsToIpCommunity && (
+                    <div className="mt-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        If Yes, please specify:
+                      </label>
+                      <input
+                        type="text"
+                        name="ipCommunityName"
+                        value={formData.ipCommunityName}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter community name"
+                      />
+                    </div>
+                  )}
                 </div>
-                
-                <div>
+
+                {/* 4Ps Beneficiary */}
+                <div className="col-span-1 md:col-span-2 lg:col-span-3">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Religion
+                    Is your family a beneficiary of 4Ps?
                   </label>
-                  <input
-                    type="text"
-                    name="religion"
-                    value={formData.religion}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter religion"
-                  />
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="is4psBeneficiary"
+                        value="yes"
+                        checked={formData.is4psBeneficiary === true}
+                        onChange={() => setFormData(prev => ({ ...prev, is4psBeneficiary: true }))}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Yes</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="is4psBeneficiary"
+                        value="no"
+                        checked={formData.is4psBeneficiary === false}
+                        onChange={() => setFormData(prev => ({ ...prev, is4psBeneficiary: false, fourPsHouseholdId: '' }))}
+                        className="form-radio h-4 w-4 text-blue-600"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">No</span>
+                    </label>
+                  </div>
+                  {formData.is4psBeneficiary && (
+                    <div className="mt-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        If Yes, write the 4Ps Household ID Number below
+                      </label>
+                      <input
+                        type="text"
+                        name="fourPsHouseholdId"
+                        value={formData.fourPsHouseholdId}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter 4Ps Household ID"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
