@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-=======
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
->>>>>>> origin/jabba
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react'
 
 const ResetPassword = () => {
