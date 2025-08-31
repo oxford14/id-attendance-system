@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { useStudent } from '../hooks/useStudent';
 import { User, Mail, Calendar, MapPin, Phone, GraduationCap, Users } from 'lucide-react';
 
 const StudentEnrollment = ({ onCancel, onSuccess }) => {
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { createStudent, loading: contextLoading, error: contextError } = useStudent();
+  
+  const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
   const [copyAddress, setCopyAddress] = useState(false);
+  
+  const loading = contextLoading;
+  const error = localError || contextError;
 
   const [formData, setFormData] = useState({
+    // Enrollment Information
+    schoolYear: '',
+    gradeLevel: '',
+    withLRN: false,
+    returningStudent: false,
+    
     // Learner Information
     email: '',
     role: 'student',
+    psaBirthCertificateNumber: '',
     lrn: '',
     lastName: '',
     firstName: '',
@@ -148,22 +158,24 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setLocalError('');
     setSuccess('');
     
     const validationError = validateForm();
     if (validationError) {
-      setError(validationError);
+      setLocalError(validationError);
       return;
     }
     
-    setLoading(true);
-    
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('student_profile').insert([{
+      const studentData = {
+        // Enrollment Information
+        school_year: formData.schoolYear,
+        grade_level: formData.gradeLevel,
+        with_lrn: formData.withLRN,
+        returning_student: formData.returningStudent,
+        // Learner Information
+        psa_birth_certificate_number: formData.psaBirthCertificateNumber,
         learner_reference_number: formData.lrn,
         last_name: formData.lastName,
         first_name: formData.firstName,
@@ -211,20 +223,18 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
         last_school_year_completed: formData.lastSchoolYear,
         last_school_attended: formData.lastSchoolName,
         last_school_id: formData.lastSchoolId,
-      }]);
+      };
 
-      if (error) {
-        throw error;
+      const result = await createStudent(studentData);
+      
+      if (result) {
+        setSuccess('Student enrolled successfully!');
+        setTimeout(() => {
+          if (onSuccess) onSuccess();
+        }, 2000);
       }
-
-      setSuccess('Student enrolled successfully!');
-      setTimeout(() => {
-        if (onSuccess) onSuccess();
-      }, 2000);
     } catch (err) {
-      setError(err.message || 'Failed to enroll student. Please try again.');
-    } finally {
-      setLoading(false);
+      setLocalError(err.message || 'Failed to enroll student. Please try again.');
     }
   };
 
@@ -253,6 +263,137 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               </div>
             )}
             
+            {/* Enrollment Information */}
+            <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
+              <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
+                <GraduationCap className="w-7 h-7 text-primary-600" />
+                Enrollment Information
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    School Year *
+                  </label>
+                  <input
+                    type="text"
+                    name="schoolYear"
+                    value={formData.schoolYear}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="e.g., 2024-2025"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Grade Level to Enroll *
+                  </label>
+                  <select
+                    name="gradeLevel"
+                    value={formData.gradeLevel}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    <option value="">Select Grade Level</option>
+                    <option value="Kindergarten">Kindergarten</option>
+                    <option value="Grade 1">Grade 1</option>
+                    <option value="Grade 2">Grade 2</option>
+                    <option value="Grade 3">Grade 3</option>
+                    <option value="Grade 4">Grade 4</option>
+                    <option value="Grade 5">Grade 5</option>
+                    <option value="Grade 6">Grade 6</option>
+                    <option value="Grade 7">Grade 7</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="withLRN"
+                    name="withLRN"
+                    checked={formData.withLRN}
+                    onChange={handleInputChange}
+                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="withLRN" className="text-sm font-medium text-gray-700">
+                    With LRN?
+                  </label>
+                  <div className="flex space-x-4 ml-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="withLRNOption"
+                        value="yes"
+                        checked={formData.withLRN === true}
+                        onChange={(e) => setFormData(prev => ({ ...prev, withLRN: true }))}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-gray-600">Yes</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="withLRNOption"
+                        value="no"
+                        checked={formData.withLRN === false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, withLRN: false }))}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-gray-600">No</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="returningStudent"
+                    name="returningStudent"
+                    checked={formData.returningStudent}
+                    onChange={handleInputChange}
+                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="returningStudent" className="text-sm font-medium text-gray-700">
+                    Returning (Balik-Aral)
+                  </label>
+                  <div className="flex space-x-4 ml-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="returningStudentOption"
+                        value="yes"
+                        checked={formData.returningStudent === true}
+                        onChange={(e) => setFormData(prev => ({ ...prev, returningStudent: true }))}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-gray-600">Yes</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="returningStudentOption"
+                        value="no"
+                        checked={formData.returningStudent === false}
+                        onChange={(e) => setFormData(prev => ({ ...prev, returningStudent: false }))}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-gray-600">No</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             {/* Learner Information */}
             <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
@@ -261,6 +402,20 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    PSA Birth Certificate No. (if available upon registration)
+                  </label>
+                  <input
+                    type="text"
+                    name="psaBirthCertificateNumber"
+                    value={formData.psaBirthCertificateNumber}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="PSA Birth Certificate Number"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Learner Reference Number (LRN)
