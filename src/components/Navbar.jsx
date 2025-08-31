@@ -49,12 +49,12 @@ const Navbar = () => {
               Notifications
             </Link>
             
-            {/* Admin only - User Management */}
             {userRole === 'admin' && (
               <Link to="/users" className={isActive('/users')}>
                 <Settings size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
                 User Management
               </Link>
+            )}
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: '#6b7280', fontSize: '14px' }}>

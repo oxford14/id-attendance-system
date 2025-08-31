@@ -7,35 +7,9 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
-  const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState('admin'); // Default to admin
 
   useEffect(() => {
-    // Function to fetch user role from database
-    const fetchUserRole = async (userId) => {
-      if (!userId) {
-        setUserRole(null);
-        return;
-      }
-      
-      try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId)
-          .single();
-        
-        if (error && error.code !== 'PGRST116') { // PGRST116 is "not found" error
-          console.error('Error fetching user role:', error);
-          setUserRole(null);
-        } else {
-          setUserRole(data?.role || null);
-        }
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-        setUserRole(null);
-      }
-    };
-
     // Get initial session
     const getInitialSession = async () => {
       try {
@@ -45,11 +19,6 @@ const AuthProvider = ({ children }) => {
         } else {
           setSession(session);
           setUser(session?.user ?? null);
-          
-          // Fetch user role for initial session
-          if (session?.user) {
-            await fetchUserRole(session.user.id);
-          }
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
@@ -62,18 +31,10 @@ const AuthProvider = ({ children }) => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
-        
-        // Fetch user role when user signs in
-        if (session?.user) {
-          await fetchUserRole(session.user.id);
-        } else {
-          setUserRole(null);
-        }
-        
         setLoading(false);
       }
     );
