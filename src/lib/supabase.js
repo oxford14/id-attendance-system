@@ -107,6 +107,63 @@ export const db = {
     }
   },
 
+  // Student Profiles
+  studentProfiles: {
+    getAll: async (filters = {}, pagination = {}) => {
+      let query = supabase
+        .from('student_profile')
+        .select('id, learner_reference_number, last_name, first_name, middle_name, extension_name, sex, school_year, grade_level', { count: 'exact' })
+        .order('last_name', { ascending: true })
+        .order('first_name', { ascending: true })
+      
+      // Apply filters
+      if (filters.schoolYear) {
+        query = query.eq('school_year', filters.schoolYear)
+      }
+      if (filters.gradeLevel) {
+        query = query.eq('grade_level', filters.gradeLevel)
+      }
+      
+      // Apply pagination
+      if (pagination.page && pagination.pageSize) {
+        const from = (pagination.page - 1) * pagination.pageSize
+        const to = from + pagination.pageSize - 1
+        query = query.range(from, to)
+      }
+      
+      const { data, error, count } = await query
+      return { data, error, count }
+    },
+
+    getDistinctSchoolYears: async () => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .select('school_year')
+        .not('school_year', 'is', null)
+        .order('school_year', { ascending: false })
+      
+      if (error) return { data: [], error }
+      
+      // Get unique school years
+      const uniqueYears = [...new Set(data.map(item => item.school_year))]
+      return { data: uniqueYears, error: null }
+    },
+
+    getDistinctGradeLevels: async () => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .select('grade_level')
+        .not('grade_level', 'is', null)
+        .order('grade_level', { ascending: true })
+      
+      if (error) return { data: [], error }
+      
+      // Get unique grade levels
+      const uniqueGrades = [...new Set(data.map(item => item.grade_level))]
+      return { data: uniqueGrades, error: null }
+    }
+  },
+
   // Parents
   parents: {
     getAll: async () => {

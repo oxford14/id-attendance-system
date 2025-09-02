@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../lib/supabase'
 import LoadingSpinner from './LoadingSpinner'
 import StudentEnrollment from './StudentEnrollment'
-import { Users, Plus, Edit, Trash2, Save, X, User } from 'lucide-react'
+import { Users, Plus, Filter, ChevronLeft, ChevronRight, User } from 'lucide-react'
 
 const StudentManagement = () => {
   const navigate = useNavigate();
@@ -11,29 +11,58 @@ const StudentManagement = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [showAddForm, setShowAddForm] = useState(false)
   const [showEnrollmentForm, setShowEnrollmentForm] = useState(false)
-  const [editingStudent, setEditingStudent] = useState(null)
-  const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    grade: '',
-    rf_id: '',
-    parent_name: '',
-    parent_email: '',
-    parent_phone: ''
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    schoolYear: '',
+    gradeLevel: ''
   })
+  const [schoolYears, setSchoolYears] = useState([])
+  const [gradeLevels, setGradeLevels] = useState([])
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalCount, setTotalCount] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+
+  useEffect(() => {
+    loadFilterOptions()
+  }, [])
 
   useEffect(() => {
     loadStudents()
-  }, [])
+  }, [filters, currentPage, pageSize])
+
+  const loadFilterOptions = async () => {
+    try {
+      // Load school years
+      const { data: years, error: yearsError } = await db.studentProfiles.getDistinctSchoolYears()
+      if (yearsError) throw yearsError
+      setSchoolYears(years || [])
+      
+      // Load grade levels
+      const { data: grades, error: gradesError } = await db.studentProfiles.getDistinctGradeLevels()
+      if (gradesError) throw gradesError
+      setGradeLevels(grades || [])
+    } catch (err) {
+      console.error('Failed to load filter options:', err)
+    }
+  }
 
   const loadStudents = async () => {
     try {
       setLoading(true)
-      const { data, error } = await db.students.getAll()
+      const { data, error, count } = await db.studentProfiles.getAll(
+        filters,
+        { page: currentPage, pageSize }
+      )
       if (error) throw error
+      
       setStudents(data || [])
+      setTotalCount(count || 0)
+      setTotalPages(Math.ceil((count || 0) / pageSize))
     } catch (err) {
       setError('Failed to load students')
       console.error('Load students error:', err)
@@ -42,155 +71,68 @@ const StudentManagement = () => {
     }
   }
 
-  const resetForm = () => {
-    setFormData({
-      first_name: '',
-      last_name: '',
-      grade: '',
-      rf_id: '',
-      parent_name: '',
-      parent_email: '',
-      parent_phone: ''
-    })
-    setShowAddForm(false)
-    setEditingStudent(null)
-    setError('')
-    setSuccess('')
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }))
+    setCurrentPage(1) // Reset to first page when filters change
   }
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage)
+    }
   }
 
-  const validateForm = () => {
-    if (!formData.first_name.trim()) {
-      setError('First name is required')
-      return false
-    }
-    if (!formData.last_name.trim()) {
-      setError('Last name is required')
-      return false
-    }
-    if (!formData.grade.trim()) {
-      setError('Grade is required')
-      return false
-    }
-    if (!formData.rf_id.trim()) {
-      setError('RF ID is required')
-      return false
-    }
-    if (!formData.parent_name.trim()) {
-      setError('Parent name is required')
-      return false
-    }
-    if (!formData.parent_email.trim()) {
-      setError('Parent email is required')
-      return false
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(parseInt(newPageSize))
+    setCurrentPage(1) // Reset to first page when page size changes
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      schoolYear: '',
+      gradeLevel: ''
+    })
+    setCurrentPage(1)
+  }
+
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisiblePages = 5
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1)
     }
     
-    // Check if RF ID already exists (for new students or different student)
-    const existingStudent = students.find(s => 
-      s.rf_id === formData.rf_id.trim() && 
-      (!editingStudent || s.id !== editingStudent.id)
-    )
-    if (existingStudent) {
-      setError('RF ID already exists for another student')
-      return false
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i)
     }
     
-    return true
+    return pages
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setSuccess('')
-    
-    if (!validateForm()) return
-
-    try {
-      if (editingStudent) {
-        // Update existing student
-        const { data, error } = await db.students.update(editingStudent.id, formData)
-        if (error) throw error
-        setSuccess('Student updated successfully!')
-      } else {
-        // Create new student
-        const { data, error } = await db.students.create(formData)
-        if (error) throw error
-        setSuccess('Student added successfully!')
-      }
-      
-      await loadStudents()
-      resetForm()
-    } catch (err) {
-      setError('Failed to save student. Please try again.')
-      console.error('Save student error:', err)
-    }
-  }
-
-  const handleEdit = (student) => {
-    setFormData({
-      first_name: student.first_name,
-      last_name: student.last_name,
-      grade: student.grade,
-      rf_id: student.rf_id,
-      parent_name: student.parent_name,
-      parent_email: student.parent_email,
-      parent_phone: student.parent_phone || ''
-    })
-    setEditingStudent(student)
-    setShowAddForm(true)
-  }
-
-  const handleDelete = async (student) => {
-    if (!window.confirm(`Are you sure you want to delete ${student.first_name} ${student.last_name}?`)) {
-      return
-    }
-
-    try {
-      const { error } = await db.students.delete(student.id)
-      if (error) throw error
-      
-      setSuccess('Student deleted successfully!')
-      await loadStudents()
-    } catch (err) {
-      setError('Failed to delete student. Please try again.')
-      console.error('Delete student error:', err)
-    }
-  }
-
-  if (loading) {
-    return <LoadingSpinner message="Loading students..." />
+  if (loading && students.length === 0) {
+    return <LoadingSpinner />
   }
 
   return (
-    <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '32px'
-      }}>
-        <div>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
-            Student Management
-          </h1>
-          <p style={{ color: '#6b7280', fontSize: '18px' }}>
-            Manage student profiles and RF IDs
-          </p>
-        </div>
-        
+    <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937' }}>
+          <Users size={32} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
+          Student Management
+        </h1>
         <button
-          onClick={() => navigate('/enroll')}
+          onClick={() => setShowEnrollmentForm(true)}
           className="btn btn-primary"
           style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Plus size={20} />
-          Add Student
+          Enroll Student
         </button>
       </div>
 
@@ -222,204 +164,226 @@ const StudentManagement = () => {
         />
       )}
 
-      {/* Quick Add/Edit Form */}
-      {showAddForm && (
-        <div className="card" style={{ marginBottom: '32px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
-            {editingStudent ? 'Edit Student' : 'Add New Student'}
-          </h2>
+      {/* Filters */}
+      <div className="card" style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Filter size={20} />
+            <span style={{ fontWeight: '600' }}>Filters:</span>
+          </div>
           
-          <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-              <div className="form-group">
-                <label className="form-label">First Name</label>
-                <input
-                  type="text"
-                  name="first_name"
-                  className="form-input"
-                  value={formData.first_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter first name"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  name="last_name"
-                  className="form-input"
-                  value={formData.last_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter last name"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Grade</label>
-                <input
-                  type="text"
-                  name="grade"
-                  className="form-input"
-                  value={formData.grade}
-                  onChange={handleInputChange}
-                  placeholder="Enter grade (e.g., 5A, 10B)"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">RF ID</label>
-                <input
-                  type="text"
-                  name="rf_id"
-                  className="form-input"
-                  value={formData.rf_id}
-                  onChange={handleInputChange}
-                  placeholder="Enter RF ID"
-                  style={{ fontFamily: 'monospace' }}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Parent Name</label>
-                <input
-                  type="text"
-                  name="parent_name"
-                  className="form-input"
-                  value={formData.parent_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter parent name"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Parent Email</label>
-                <input
-                  type="email"
-                  name="parent_email"
-                  className="form-input"
-                  value={formData.parent_email}
-                  onChange={handleInputChange}
-                  placeholder="Enter parent email"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label">Parent Phone (Optional)</label>
-                <input
-                  type="tel"
-                  name="parent_phone"
-                  className="form-input"
-                  value={formData.parent_phone}
-                  onChange={handleInputChange}
-                  placeholder="Enter parent phone"
-                />
-              </div>
-            </div>
-            
-            <div className="btn-group" style={{ marginBottom: '24px' }}>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                <Save size={16} />
-                {editingStudent ? 'Update Student' : 'Add Student'}
-              </button>
-              
-              <button
-                type="button"
-                onClick={resetForm}
-                className="btn btn-secondary"
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                <X size={16} />
-                Cancel
-              </button>
-            </div>
-          </form>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500' }}>School Year:</label>
+            <select
+              value={filters.schoolYear}
+              onChange={(e) => handleFilterChange('schoolYear', e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '14px',
+                minWidth: '120px'
+              }}
+            >
+              <option value="">All Years</option>
+              {schoolYears.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500' }}>Grade Level:</label>
+            <select
+              value={filters.gradeLevel}
+              onChange={(e) => handleFilterChange('gradeLevel', e.target.value)}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '14px',
+                minWidth: '120px'
+              }}
+            >
+              <option value="">All Grades</option>
+              {gradeLevels.map(grade => (
+                <option key={grade} value={grade}>{grade}</option>
+              ))}
+            </select>
+          </div>
+          
+          {(filters.schoolYear || filters.gradeLevel) && (
+            <button
+              onClick={clearFilters}
+              className="btn btn-secondary"
+              style={{ fontSize: '14px', padding: '8px 16px' }}
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Students List */}
       <div className="card">
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
-          <Users size={24} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-          Students ({students.length})
-        </h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
+            Students ({totalCount})
+          </h2>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{ fontSize: '14px', fontWeight: '500' }}>Show:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(e.target.value)}
+              style={{
+                padding: '6px 10px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
+            >
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span style={{ fontSize: '14px' }}>per page</span>
+          </div>
+        </div>
         
-        {students.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <LoadingSpinner />
+          </div>
+        ) : students.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
             <User size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
-            <p>No students added yet.</p>
-            <p>Click "Add Student" to get started.</p>
+            <p>No students found.</p>
+            {(filters.schoolYear || filters.gradeLevel) ? (
+              <p>Try adjusting your filters or <button onClick={clearFilters} style={{ color: '#3b82f6', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>clear all filters</button>.</p>
+            ) : (
+              <p>Click "Enroll Student" to get started.</p>
+            )}
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="table-responsive" style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Name</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Grade</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>RF ID</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Parent</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Contact</th>
-                  <th style={{ padding: '12px', textAlign: 'center', fontWeight: '600' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {students.map((student, index) => (
-                  <tr key={student.id} style={{ 
-                    borderBottom: '1px solid #e5e7eb',
-                    backgroundColor: index % 2 === 0 ? '#f9fafb' : 'white'
-                  }}>
-                    <td style={{ padding: '12px' }}>
-                      <div>
-                        <div style={{ fontWeight: '600' }}>
-                          {student.first_name} {student.last_name}
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px' }}>{student.grade}</td>
-                    <td style={{ padding: '12px', fontFamily: 'monospace' }}>{student.rf_id}</td>
-                    <td style={{ padding: '12px' }}>{student.parent_name}</td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ fontSize: '14px' }}>
-                        <div>{student.parent_email}</div>
-                        {student.parent_phone && (
-                          <div style={{ color: '#6b7280' }}>{student.parent_phone}</div>
-                        )}
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        <button
-                          onClick={() => handleEdit(student)}
-                          className="btn btn-secondary"
-                          style={{ padding: '6px 12px', fontSize: '14px' }}
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(student)}
-                          className="btn btn-danger"
-                          style={{ padding: '6px 12px', fontSize: '14px' }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="table-responsive" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>LRN No.</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Last Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>First Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Middle Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Extension Name</th>
+                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Sex</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {students.map((student, index) => (
+                    <tr key={student.id} style={{ 
+                      borderBottom: '1px solid #e5e7eb',
+                      backgroundColor: index % 2 === 0 ? '#f9fafb' : 'white'
+                    }}>
+                      <td style={{ padding: '12px', fontFamily: 'monospace' }}>
+                        {student.learner_reference_number || 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px', fontWeight: '600' }}>
+                        {student.last_name || 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        {student.first_name || 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        {student.middle_name || 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        {student.extension_name || 'N/A'}
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        {student.sex || 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                marginTop: '24px',
+                padding: '16px 0',
+                borderTop: '1px solid #e5e7eb'
+              }}>
+                <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                  Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      backgroundColor: currentPage === 1 ? '#f3f4f6' : 'white',
+                      color: currentPage === 1 ? '#9ca3af' : '#374151',
+                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <ChevronLeft size={16} />
+                    Previous
+                  </button>
+                  
+                  {getPageNumbers().map(pageNum => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      style={{
+                        padding: '8px 12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        backgroundColor: pageNum === currentPage ? '#3b82f6' : 'white',
+                        color: pageNum === currentPage ? 'white' : '#374151',
+                        cursor: 'pointer',
+                        minWidth: '40px'
+                      }}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                  
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    style={{
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      backgroundColor: currentPage === totalPages ? '#f3f4f6' : 'white',
+                      color: currentPage === totalPages ? '#9ca3af' : '#374151',
+                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    Next
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
