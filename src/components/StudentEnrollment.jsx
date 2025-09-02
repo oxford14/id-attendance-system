@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useStudent } from '../hooks/useStudent';
 import { User, Mail, Calendar, MapPin, Phone, GraduationCap, Users } from 'lucide-react';
 
@@ -7,12 +7,14 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
   
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [copyAddress, setCopyAddress] = useState(false);
+  const schoolYearRef = useRef(null);
   
   const loading = contextLoading;
   const error = localError || contextError;
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     // Enrollment Information
     schoolYear: '',
     gradeLevel: '',
@@ -76,11 +78,30 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
     lastSchoolYear: '',
     lastSchoolName: '',
     lastSchoolId: '',
-    shsCompleter: false,
-    shsGenAve: '',
-    shsTrack: '',
+    lastSchoolAddress: '',
+    generalAverage: '',
     shsStrand: ''
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  const resetForm = () => {
+    setFormData(initialFormData);
+    setLocalError('');
+    setSuccess('');
+    setCopyAddress(false);
+  };
+
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    resetForm();
+    // Focus on School Year field after successful save and reset
+    setTimeout(() => {
+      if (schoolYearRef.current) {
+        schoolYearRef.current.focus();
+      }
+    }, 100);
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -151,6 +172,11 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
     const age = parseInt(formData.age);
     if (age < 3 || age > 25) {
       return 'Age must be between 3 and 25 years for enrollment.';
+    }
+    
+    // LRN validation (if provided, must be exactly 12 digits)
+    if (formData.lrn && (!/^\d{12}$/.test(formData.lrn))) {
+      return 'Learner Reference Number must be exactly 12 digits.';
     }
     
     return null;
@@ -228,10 +254,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
       const result = await createStudent(studentData);
       
       if (result) {
-        setSuccess('Student enrolled successfully!');
-        setTimeout(() => {
-          if (onSuccess) onSuccess();
-        }, 2000);
+        setShowSuccessModal(true);
       }
     } catch (err) {
       setLocalError(err.message || 'Failed to enroll student. Please try again.');
@@ -276,12 +299,13 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     School Year *
                   </label>
                   <input
+                    ref={schoolYearRef}
                     type="text"
                     name="schoolYear"
                     value={formData.schoolYear}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., 2024-2025"
+                    placeholder="E.g., 2024-2025"
                     required
                   />
                 </div>
@@ -401,10 +425,11 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 Learner Information
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* First Row: PSA Birth Certificate and LRN - Full Width */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    PSA Birth Certificate No. (if available upon registration)
+                    PSA Birth Certificate No.
                   </label>
                   <input
                     type="text"
@@ -414,6 +439,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="PSA Birth Certificate Number"
                   />
+                  <p className="text-xs text-gray-500 mt-1">If available upon registration</p>
                 </div>
 
                 <div>
@@ -426,11 +452,20 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lrn}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="12-digit LRN"
+                    placeholder="12-Digit LRN"
                     maxLength="12"
+                    pattern="[0-9]{12}"
+                    title="Learner Reference Number must be exactly 12 digits"
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    }}
                   />
+                  <p className="text-xs text-gray-500 mt-1">Input 12 digit LRN</p>
                 </div>
+              </div>
 
+              {/* Second Row: Name Fields */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Last Name *
@@ -441,7 +476,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lastName}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter last name"
+                    placeholder="Enter Last Name"
                     required
                   />
                 </div>
@@ -456,7 +491,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.firstName}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter first name"
+                    placeholder="Enter First Name"
                     required
                   />
                 </div>
@@ -471,7 +506,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.middleName}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter middle name"
+                    placeholder="Enter Middle Name"
                   />
                 </div>
                 
@@ -501,7 +536,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.contactNo}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter contact number"
+                      placeholder="Enter Contact Number"
                       required
                     />
                   </div>
@@ -519,7 +554,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.email}
                       onChange={handleInputChange}
                       className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter email address"
+                      placeholder="Enter Email Address"
                       required
                     />
                   </div>
@@ -552,7 +587,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.age}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
-                    placeholder="Auto-calculated"
+                    placeholder="Auto-Calculated"
                     readOnly
                   />
                 </div>
@@ -567,7 +602,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.placeOfBirth}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter place of birth"
+                    placeholder="Enter Place Of Birth"
                   />
                 </div>
                 
@@ -582,7 +617,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Select sex</option>
+                    <option value="">Select Sex</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
@@ -598,7 +633,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.motherTongue}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter mother tongue"
+                    placeholder="Enter Mother Tongue"
                   />
                 </div>
 
@@ -642,7 +677,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.ipCommunityName}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter community name"
+                        placeholder="Enter Community Name"
                       />
                     </div>
                   )}
@@ -714,7 +749,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentHouseNo}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="House number and street"
+                    placeholder="House Number And Street"
                   />
                 </div>
                 
@@ -728,7 +763,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentBarangay}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter barangay"
+                    placeholder="Enter Barangay"
                   />
                 </div>
                 
@@ -742,7 +777,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentMunicipality}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter municipality/city"
+                    placeholder="Enter Municipality/City"
                   />
                 </div>
                 
@@ -756,7 +791,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentProvince}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter province"
+                    placeholder="Enter Province"
                   />
                 </div>
                 
@@ -770,7 +805,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentCountry}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter country"
+                    placeholder="Enter Country"
                   />
                 </div>
                 
@@ -784,7 +819,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.currentZipCode}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter ZIP code"
+                    placeholder="Enter ZIP Code"
                   />
                 </div>
               </div>
@@ -819,7 +854,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.permanentHouseNo}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="House number and street"
+                    placeholder="House Number and Street"
                   />
                 </div>
                 
@@ -833,7 +868,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.permanentBarangay}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter barangay"
+                    placeholder="Enter Barangay"
                   />
                 </div>
                 
@@ -847,7 +882,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.permanentMunicipality}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter municipality/city"
+                    placeholder="Enter Municipality/City"
                   />
                 </div>
                 
@@ -861,7 +896,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.permanentProvince}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter province"
+                    placeholder="Enter Province"
                   />
                 </div>
                 
@@ -875,7 +910,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.permanentCountry}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter country"
+                    placeholder="Enter Country"
                   />
                 </div>
                 
@@ -916,7 +951,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.fatherLastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Father's last name"
+                      placeholder="Father's Last Name"
                     />
                   </div>
                   
@@ -930,7 +965,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.fatherFirstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Father's first name"
+                      placeholder="Father's First Name"
                     />
                   </div>
                   
@@ -944,7 +979,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.fatherMiddleName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Father's middle name"
+                      placeholder="Father's Middle Name"
                     />
                   </div>
                   
@@ -960,7 +995,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.fatherContactNo}
                         onChange={handleInputChange}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Father's contact number"
+                        placeholder="Father's Contact Number"
                       />
                     </div>
                   </div>
@@ -981,7 +1016,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.motherLastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Mother's last name"
+                      placeholder="Mother's Last Name"
                     />
                   </div>
                   
@@ -995,7 +1030,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.motherFirstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Mother's first name"
+                      placeholder="Mother's First Name"
                     />
                   </div>
                   
@@ -1009,7 +1044,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.motherMiddleName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Mother's middle name"
+                      placeholder="Mother's Middle Name"
                     />
                   </div>
                   
@@ -1025,7 +1060,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.motherContactNo}
                         onChange={handleInputChange}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Mother's contact number"
+                        placeholder="Mother's Contact Number"
                       />
                     </div>
                   </div>
@@ -1046,7 +1081,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.guardianLastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Guardian's last name"
+                      placeholder="Guardian's Last Name"
                     />
                   </div>
                   
@@ -1060,7 +1095,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.guardianFirstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Guardian's first name"
+                      placeholder="Guardian's First Name"
                     />
                   </div>
                   
@@ -1074,7 +1109,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       value={formData.guardianMiddleName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Guardian's middle name"
+                      placeholder="Guardian's Middle Name"
                     />
                   </div>
                   
@@ -1090,7 +1125,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.guardianContactNo}
                         onChange={handleInputChange}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Guardian's contact number"
+                        placeholder="Guardian's Contact Number"
                       />
                     </div>
                   </div>
@@ -1116,7 +1151,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lastGradeLevel}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., Grade 10, Grade 12"
+                    placeholder="E.g., Grade 10, Grade 12"
                   />
                 </div>
                 
@@ -1130,7 +1165,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lastSchoolYear}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., 2022-2023"
+                    placeholder="E.g., 2022-2023"
                   />
                 </div>
                 
@@ -1144,7 +1179,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lastSchoolName}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Name of last school attended"
+                    placeholder="Name Of Last School Attended"
                   />
                 </div>
                 
@@ -1158,7 +1193,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     value={formData.lastSchoolId}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="School ID number"
+                    placeholder="School ID Number"
                   />
                 </div>
               </div>
@@ -1190,7 +1225,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.shsGenAve}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="General average"
+                        placeholder="General Average"
                         min="75"
                         max="100"
                         step="0.01"
@@ -1225,7 +1260,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         value={formData.shsStrand}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="e.g., STEM, ABM, HUMSS"
+                        placeholder="E.g., STEM, ABM, HUMSS"
                       />
                     </div>
                   </div>
@@ -1254,6 +1289,30 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
           </form>
         </div>
       </div>
+      
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-xl">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Student Information Successfully Saved
+              </h3>
+              <button
+                onClick={handleSuccessModalClose}
+                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -26,8 +26,8 @@ const Dashboard = () => {
     try {
       setLoading(true)
       
-      // Get total students
-      const { data: students, error: studentsError } = await db.students.getAll()
+      // Get total students from student_profile table
+      const { data: students, error: studentsError } = await db.studentProfiles.getAll()
       if (studentsError) throw studentsError
 
       // Get all attendance records
