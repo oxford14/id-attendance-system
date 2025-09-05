@@ -10,6 +10,7 @@ const AttendanceScanner = () => {
   const [messageType, setMessageType] = useState('') // 'success', 'error', 'info'
   const [lastScannedStudent, setLastScannedStudent] = useState(null)
   const [recentScans, setRecentScans] = useState([])
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
 
   useEffect(() => {
     loadRecentScans()
@@ -42,7 +43,7 @@ const AttendanceScanner = () => {
 
     try {
       // Find student by RF ID
-      const { data: student, error: studentError } = await db.students.getByRfId(rfId.trim())
+      const { data: student, error: studentError } = await db.studentProfiles.getByRfId(rfId.trim())
       
       if (studentError || !student) {
         setMessage(`No student found with RF ID: ${rfId}`)
@@ -51,8 +52,8 @@ const AttendanceScanner = () => {
         return
       }
 
-      // Check if student already scanned today
-      const { data: todayAttendance, error: attendanceError } = await db.attendance.getTodayByStudentId(student.id)
+      // Check if student already scanned today using learner_reference_number
+      const { data: todayAttendance, error: attendanceError } = await db.attendance.getTodayByLearnerReferenceNumber(student.learner_reference_number)
       
       if (attendanceError) {
         throw attendanceError
@@ -65,11 +66,15 @@ const AttendanceScanner = () => {
         return
       }
 
-      // Create attendance record
+      // Create attendance record with all required fields
       const { data: attendanceRecord, error: createError } = await db.attendance.create({
-        student_id: student.id,
+        learner_reference_number: student.learner_reference_number,
+        rfid_tag: student.rfid_tag,
+        school_year: student.school_year || '2024-2025',
+        grade_level: student.grade || student.grade_level,
         status: 'present',
-        scanned_at: new Date().toISOString()
+        scanned_at: new Date().toISOString(),
+        notes: `Scanned via RFID at ${new Date().toLocaleString()}`
       })
 
       if (createError) {
@@ -79,6 +84,14 @@ const AttendanceScanner = () => {
       setMessage(`✅ ${student.first_name} ${student.last_name} marked present!`)
       setMessageType('success')
       setLastScannedStudent(student)
+      
+      // Show success overlay
+      setShowSuccessOverlay(true)
+      
+      // Hide overlay after 3 seconds
+      setTimeout(() => {
+        setShowSuccessOverlay(false)
+      }, 2500)
       
       // Reload recent scans
       await loadRecentScans()
@@ -127,6 +140,56 @@ const AttendanceScanner = () => {
 
   return (
     <div>
+      {/* Success Overlay */}
+      {showSuccessOverlay && lastScannedStudent && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          animation: 'fadeIn 0.3s ease-in-out'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '48px',
+            borderRadius: '16px',
+            textAlign: 'center',
+            maxWidth: '400px',
+            width: '90%',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+          }}>
+            <CheckCircle size={64} style={{ color: '#10b981', marginBottom: '24px' }} />
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '16px', color: '#1f2937' }}>
+              Attendance Recorded!
+            </h2>
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+                {lastScannedStudent.first_name} {lastScannedStudent.last_name}
+              </h3>
+              <p style={{ color: '#6b7280', fontSize: '16px', marginBottom: '4px' }}>Grade: {lastScannedStudent.grade}</p>
+              <p style={{ color: '#6b7280', fontSize: '16px', marginBottom: '4px' }}>RF ID: {lastScannedStudent.rfid_tag}</p>
+              <p style={{ color: '#6b7280', fontSize: '16px' }}>Time: {new Date().toLocaleTimeString()}</p>
+            </div>
+            <div style={{
+              padding: '12px 24px',
+              backgroundColor: '#d1fae5',
+              color: '#065f46',
+              borderRadius: '8px',
+              fontSize: '18px',
+              fontWeight: '600'
+            }}>
+              ✓ Present
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
           RF ID Scanner
@@ -203,7 +266,7 @@ const AttendanceScanner = () => {
               {lastScannedStudent.first_name} {lastScannedStudent.last_name}
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '4px' }}>Grade: {lastScannedStudent.grade}</p>
-            <p style={{ color: '#6b7280', marginBottom: '4px' }}>RF ID: {lastScannedStudent.rf_id}</p>
+            <p style={{ color: '#6b7280', marginBottom: '4px' }}>RF ID: {lastScannedStudent.rfid_tag}</p>
             <p style={{ color: '#6b7280' }}>Parent: {lastScannedStudent.parent_name}</p>
           </div>
         )}
@@ -237,10 +300,10 @@ const AttendanceScanner = () => {
               >
                 <div>
                   <h4 style={{ fontWeight: '600', marginBottom: '4px' }}>
-                    {scan.students?.first_name} {scan.students?.last_name}
+                    {scan.student_profile?.first_name} {scan.student_profile?.last_name}
                   </h4>
                   <p style={{ color: '#6b7280', fontSize: '14px' }}>
-                    Grade {scan.students?.grade} • RF ID: {scan.students?.rf_id}
+                    Grade {scan.grade_level} • RF ID: {scan.rfid_tag}
                   </p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
