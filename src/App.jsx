@@ -7,6 +7,7 @@ import Navbar from './components/Navbar'
 import Login from './components/Login'
 import ResetPassword from './components/ResetPassword'
 import UpdatePassword from './components/UpdatePassword'
+import AuthCallback from './components/AuthCallback'
 import Dashboard from './components/Dashboard'
 import StudentManagement from './components/StudentManagement'
 import AttendanceScanner from './components/AttendanceScanner'
@@ -63,6 +64,11 @@ const AppContent = () => {
             <Route path="/update-password" element={
               <PublicRoute>
                 <UpdatePassword />
+              </PublicRoute>
+            } />
+            <Route path="/auth/callback" element={
+              <PublicRoute>
+                <AuthCallback />
               </PublicRoute>
             } />
 

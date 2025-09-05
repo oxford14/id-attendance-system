@@ -232,10 +232,132 @@
   .table-responsive {
     font-size: 14px;
   }
+}
+
+.table-responsive th,
+.table-responsive td {
+  padding: 8px !important;
+}
+
+/* Table styles for UserManagement */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-width: 600px;
+}
+
+.table th {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #334155;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* User table specific styles */
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  margin-right: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Responsive table design */
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: 8px;
+    margin: 0 -16px;
+  }
   
-  .table-responsive th,
-  .table-responsive td {
-    padding: 8px !important;
+  .table {
+    min-width: 500px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+  
+  .user-name {
+    font-size: 14px;
+  }
+  
+  .user-email {
+    font-size: 11px;
   }
 }
 
@@ -262,12 +384,47 @@
   .show-mobile {
     display: block !important;
   }
+  
+  .table-container {
+    margin: 0 -20px;
+  }
+  
+  .table {
+    min-width: 450px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    margin-right: 6px;
+  }
+  
+  .user-name {
+    font-size: 13px;
+  }
+  
+  .user-email {
+    font-size: 10px;
+  }
+  
+  .flex.space-x-3 {
+    gap: 8px;
+  }
+  
+  .w-8.h-8 {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 /* Enhanced UI Components */
-.show-mobile {
-  display: none;
-}
 
 .btn-group {
   display: flex;
