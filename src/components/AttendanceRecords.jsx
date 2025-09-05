@@ -75,7 +75,7 @@ const AttendanceRecords = () => {
       filtered = filtered.filter(record => {
         const studentName = `${record.students?.first_name} ${record.students?.last_name}`.toLowerCase()
         return studentName.includes(searchLower) || 
-               record.students?.rf_id?.toLowerCase().includes(searchLower)
+               record.students?.rfid_tag?.toLowerCase().includes(searchLower)
       })
     }
 
@@ -105,7 +105,7 @@ const AttendanceRecords = () => {
       new Date(record.created_at).toLocaleTimeString(),
       `${record.students?.first_name} ${record.students?.last_name}`,
       record.students?.grade,
-      record.students?.rf_id,
+      record.students?.rfid_tag,
       'Present'
     ])
 
@@ -334,12 +334,12 @@ const AttendanceRecords = () => {
                           {record.students?.first_name} {record.students?.last_name}
                         </div>
                         <div style={{ fontSize: '12px', color: '#6b7280', display: 'block' }} className="show-mobile">
-                          {record.students?.grade} • {record.students?.rf_id}
+                          {record.students?.grade} • {record.students?.rfid_tag}
                         </div>
                       </td>
                       <td className="hide-mobile" style={{ padding: '12px' }}>{record.students?.grade}</td>
                       <td className="hide-mobile" style={{ padding: '12px', fontFamily: 'monospace' }}>
-                        {record.students?.rf_id}
+                        {record.students?.rfid_tag}
                       </td>
                       <td style={{ padding: '12px' }}>
                         <span style={{

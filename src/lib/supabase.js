@@ -57,7 +57,7 @@ export const db = {
   students: {
     getAll: async () => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .select('*')
         .order('created_at', { ascending: false })
       return { data, error }
@@ -65,7 +65,7 @@ export const db = {
 
     getById: async (id) => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .select('*')
         .eq('id', id)
         .single()
@@ -74,16 +74,16 @@ export const db = {
 
     getByRfId: async (rfId) => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .select('*')
-        .eq('rf_id', rfId)
+        .eq('rfid_tag', rfId)
         .single()
       return { data, error }
     },
 
     create: async (studentData) => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .insert([studentData])
         .select()
       return { data, error }
@@ -161,6 +161,66 @@ export const db = {
       // Get unique grade levels
       const uniqueGrades = [...new Set(data.map(item => item.grade_level))]
       return { data: uniqueGrades, error: null }
+    },
+
+    getById: async (id) => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .select('*')
+        .eq('id', id)
+        .single()
+      return { data, error }
+    },
+
+    getByRfId: async (rfId) => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .select('*')
+        .eq('rfid_tag', rfId)
+        .single()
+      return { data, error }
+    },
+
+    searchForRfidAssignment: async (searchTerm = '', filters = {}) => {
+      let query = supabase
+        .from('student_profile')
+        .select('id, learner_reference_number, last_name, first_name, middle_name, extension_name, school_year, grade_level, rfid_tag')
+        .order('last_name', { ascending: true })
+        .order('first_name', { ascending: true })
+      
+      // Apply search filter
+      if (searchTerm) {
+        query = query.or(`last_name.ilike.%${searchTerm}%,first_name.ilike.%${searchTerm}%,learner_reference_number.ilike.%${searchTerm}%`)
+      }
+      
+      // Apply additional filters
+      if (filters.schoolYear) {
+        query = query.eq('school_year', filters.schoolYear)
+      }
+      if (filters.gradeLevel) {
+        query = query.eq('grade_level', filters.gradeLevel)
+      }
+      
+      const { data, error } = await query
+      return { data, error }
+    },
+
+    updateRfId: async (id, rfId) => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .update({ rfid_tag: rfId })
+        .eq('id', id)
+        .select()
+      return { data, error }
+    },
+
+    removeRfId: async (id) => {
+      const { data, error } = await supabase
+        .from('student_profile')
+        .update({ rfid_tag: null })
+        .eq('id', id)
+        .select()
+      return { data, error }
     }
   },
 
@@ -208,20 +268,20 @@ export const db = {
         .from('attendance')
         .select(`
           *,
-          students (*)
+          student_profile (*)
         `)
         .order('created_at', { ascending: false })
       return { data, error }
     },
 
-    getByStudentId: async (studentId) => {
+    getByStudentId: async (learnerReferenceNumber) => {
       const { data, error } = await supabase
         .from('attendance')
         .select(`
           *,
-          students (*)
+          student_profile (*)
         `)
-        .eq('student_id', studentId)
+        .eq('learner_reference_number', learnerReferenceNumber)
         .order('created_at', { ascending: false })
       return { data, error }
     },
@@ -232,19 +292,49 @@ export const db = {
         .insert([attendanceData])
         .select(`
           *,
-          students (*)
+          student_profile (*)
         `)
       return { data, error }
     },
 
-    getTodayByStudentId: async (studentId) => {
+    getTodayByLearnerReferenceNumber: async (learnerReferenceNumber) => {
       const today = new Date().toISOString().split('T')[0]
       const { data, error } = await supabase
         .from('attendance')
         .select('*')
-        .eq('student_id', studentId)
+        .eq('learner_reference_number', learnerReferenceNumber)
         .gte('created_at', `${today}T00:00:00`)
         .lt('created_at', `${today}T23:59:59`)
+      return { data, error }
+    },
+
+    // Get attendance statistics
+    getStats: async () => {
+      const { data: todayCount, error: todayError } = await supabase
+        .rpc('get_today_attendance_count')
+      
+      const { data: rate, error: rateError } = await supabase
+        .rpc('get_attendance_rate')
+      
+      const { data: weeklyData, error: weeklyError } = await supabase
+        .rpc('get_weekly_attendance_summary')
+      
+      return {
+        todayCount: todayCount || 0,
+        attendanceRate: rate || 0,
+        weeklyData: weeklyData || [],
+        errors: {
+          todayError,
+          rateError,
+          weeklyError
+        }
+      }
+    },
+
+    // Check if student has attendance today
+    hasAttendanceToday: async (learnerReferenceNumber) => {
+      const { data, error } = await supabase
+        .rpc('has_attendance_today', { learner_reference_number: learnerReferenceNumber })
       return { data, error }
     }
   }

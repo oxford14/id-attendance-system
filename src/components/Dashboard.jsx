@@ -241,7 +241,7 @@ const Dashboard = () => {
                       {record.students?.first_name} {record.students?.last_name}
                     </td>
                     <td style={{ padding: '12px', fontFamily: 'monospace' }}>
-                      {record.students?.rf_id}
+                      {record.students?.rfid_tag}
                     </td>
                     <td style={{ padding: '12px' }}>
                       {formatDateTime(record.created_at)}

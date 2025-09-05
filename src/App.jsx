@@ -15,6 +15,7 @@ import AttendanceRecords from './components/AttendanceRecords'
 import NotificationSettings from './components/NotificationSettings'
 import StudentEnrollment from './components/StudentEnrollment'
 import UserManagement from './components/UserManagement'
+import RFIDManagement from './components/RFIDManagement'
 import LoadingSpinner from './components/LoadingSpinner'
 
 // Protected Route Component
@@ -111,6 +112,11 @@ const AppContent = () => {
             <Route path="/users" element={
               <ProtectedRoute>
                 <UserManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="/rfid" element={
+              <ProtectedRoute>
+                <RFIDManagement />
               </ProtectedRoute>
             } />
             

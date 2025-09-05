@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { LogOut, Home, Users, Scan, FileText, Bell, Settings } from 'lucide-react'
+import { LogOut, Home, Users, Scan, FileText, Bell, Settings, Tag } from 'lucide-react'
 
 const Navbar = () => {
   const { user, userRole, signOut } = useAuth()
@@ -32,6 +32,11 @@ const Navbar = () => {
             <Link to="/students" className={isActive('/students')}>
               <Users size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
               Students
+            </Link>
+            
+            <Link to="/rfid" className={isActive('/rfid')}>
+              <Tag size={18} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+              RFID Management
             </Link>
             
             <Link to="/scanner" className={isActive('/scanner')}>
