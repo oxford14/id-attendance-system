@@ -142,98 +142,64 @@ const AttendanceScanner = () => {
     <div>
       {/* Success Overlay */}
       {showSuccessOverlay && lastScannedStudent && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          animation: 'fadeIn 0.3s ease-in-out'
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '48px',
-            borderRadius: '16px',
-            textAlign: 'center',
-            maxWidth: '400px',
-            width: '90%',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-          }}>
-            <CheckCircle size={64} style={{ color: '#10b981', marginBottom: '24px' }} />
-            <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '16px', color: '#1f2937' }}>
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-gray-800 p-12 rounded-2xl text-center max-w-sm w-11/12 shadow-2xl">
+            <CheckCircle size={64} className="text-green-500 mx-auto mb-6" />
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">
               Attendance Recorded!
             </h2>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '8px', color: '#374151' }}>
+            <div className="mb-6">
+              <h3 className="text-2xl font-semibold mb-2 text-gray-700 dark:text-gray-300">
                 {lastScannedStudent.first_name} {lastScannedStudent.last_name}
               </h3>
-              <p style={{ color: '#6b7280', fontSize: '16px', marginBottom: '4px' }}>Grade: {lastScannedStudent.grade}</p>
-              <p style={{ color: '#6b7280', fontSize: '16px', marginBottom: '4px' }}>RF ID: {lastScannedStudent.rfid_tag}</p>
-              <p style={{ color: '#6b7280', fontSize: '16px' }}>Time: {new Date().toLocaleTimeString()}</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-1">Grade: {lastScannedStudent.grade}</p>
+              <p className="text-gray-600 dark:text-gray-400 mb-1">RF ID: {lastScannedStudent.rfid_tag}</p>
+              <p className="text-gray-600 dark:text-gray-400">Time: {new Date().toLocaleTimeString()}</p>
             </div>
-            <div style={{
-              padding: '12px 24px',
-              backgroundColor: '#d1fae5',
-              color: '#065f46',
-              borderRadius: '8px',
-              fontSize: '18px',
-              fontWeight: '600'
-            }}>
+            <div className="py-3 px-6 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg text-lg font-semibold">
               ✓ Present
             </div>
           </div>
         </div>
       )}
 
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">
           RF ID Scanner
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '18px' }}>
+        <p className="text-gray-600 dark:text-gray-400 text-lg">
           Scan student RF IDs to mark attendance
         </p>
       </div>
 
       {/* Scanner Interface */}
-      <div className="card" style={{ marginBottom: '32px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Scan size={64} style={{ color: '#3b82f6', marginBottom: '16px' }} />
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+      <div className="card mb-8">
+        <div className="text-center mb-6">
+          <Scan size={64} className="text-blue-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-gray-100">
             Scan RF ID
           </h2>
-          <p style={{ color: '#6b7280' }}>
+          <p className="text-gray-600 dark:text-gray-400">
             Enter or scan the student's RF ID below
           </p>
         </div>
 
-        <form onSubmit={handleScan} style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <form onSubmit={handleScan} className="max-w-sm mx-auto">
           <div className="form-group">
             <input
               type="text"
-              className="form-input"
+              className="form-input text-center text-lg p-4 font-mono"
               value={rfId}
               onChange={(e) => setRfId(e.target.value)}
               placeholder="Enter RF ID (e.g., 1234567890)"
               disabled={scanning}
               autoFocus
-              style={{ 
-                textAlign: 'center', 
-                fontSize: '18px', 
-                padding: '16px',
-                fontFamily: 'monospace'
-              }}
             />
           </div>
           
           <button
             type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '16px', fontSize: '18px' }}
+            className="btn btn-primary w-full p-4 text-lg"
             disabled={scanning || !rfId.trim()}
           >
             {scanning ? 'Processing...' : 'Scan Attendance'}
@@ -242,83 +208,62 @@ const AttendanceScanner = () => {
 
         {/* Message Display */}
         {message && (
-          <div 
-            className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'}`}
-            style={{ marginTop: '24px', textAlign: 'center' }}
-          >
-            {messageType === 'success' && <CheckCircle size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />}
-            {messageType === 'error' && <AlertCircle size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />}
-            {messageType === 'info' && <UserCheck size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />}
+          <div className={`alert ${messageType === 'success' ? 'alert-success' : 'alert-error'} mt-6 text-center`}>
+            {messageType === 'success' && <CheckCircle size={20} className="inline mr-2 align-middle" />}
+            {messageType === 'error' && <AlertCircle size={20} className="inline mr-2 align-middle" />}
+            {messageType === 'info' && <UserCheck size={20} className="inline mr-2 align-middle" />}
             {message}
           </div>
         )}
 
         {/* Last Scanned Student */}
         {lastScannedStudent && (
-          <div style={{ 
-            marginTop: '24px', 
-            padding: '20px', 
-            backgroundColor: '#f0f9ff', 
-            borderRadius: '8px',
-            textAlign: 'center'
-          }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div className="mt-6 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+            <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
               {lastScannedStudent.first_name} {lastScannedStudent.last_name}
             </h3>
-            <p style={{ color: '#6b7280', marginBottom: '4px' }}>Grade: {lastScannedStudent.grade}</p>
-            <p style={{ color: '#6b7280', marginBottom: '4px' }}>RF ID: {lastScannedStudent.rfid_tag}</p>
-            <p style={{ color: '#6b7280' }}>Parent: {lastScannedStudent.parent_name}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-1">Grade: {lastScannedStudent.grade}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-1">RF ID: {lastScannedStudent.rfid_tag}</p>
+            <p className="text-gray-600 dark:text-gray-400">Parent: {lastScannedStudent.parent_name}</p>
           </div>
         )}
       </div>
 
       {/* Recent Scans Today */}
       <div className="card">
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
           Today's Scans
         </h2>
         
         {recentScans.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            <UserCheck size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+          <div className='card text-center py-10 text-gray-600 dark:text-gray-400'>
+            <UserCheck size={48} className="mx-auto mb-4 opacity-50" />
             <p>No scans today yet.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '12px' }}>
+          <div className="grid gap-3" style={{ backgroundColor: 'var(--color-background)' }}>
             {recentScans.map((scan) => (
               <div 
                 key={scan.id} 
+                className="flex justify-between items-center p-4 rounded-lg border"
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '16px',
-                  backgroundColor: '#f9fafb',
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb'
+                  backgroundColor: 'var(--color-card)',
+                  borderColor: 'var(--color-border)'
                 }}
               >
                 <div>
-                  <h4 style={{ fontWeight: '600', marginBottom: '4px' }}>
+                  <h4 className="font-semibold mb-1 text-gray-900 dark:text-gray-100">
                     {scan.student_profile?.first_name} {scan.student_profile?.last_name}
                   </h4>
-                  <p style={{ color: '#6b7280', fontSize: '14px' }}>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Grade {scan.grade_level} • RF ID: {scan.rfid_tag}
                   </p>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{
-                    padding: '4px 12px',
-                    borderRadius: '20px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    backgroundColor: '#d1fae5',
-                    color: '#065f46',
-                    marginBottom: '4px'
-                  }}>
+                <div className="text-right">
+                  <div className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 mb-1">
                     Present
                   </div>
-                  <p style={{ color: '#6b7280', fontSize: '14px' }}>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     {formatTime(scan.created_at)}
                   </p>
                 </div>

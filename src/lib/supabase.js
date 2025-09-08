@@ -91,7 +91,7 @@ export const db = {
 
     update: async (id, updates) => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .update(updates)
         .eq('id', id)
         .select()
@@ -100,7 +100,7 @@ export const db = {
 
     delete: async (id) => {
       const { data, error } = await supabase
-        .from('students')
+        .from('student_profile')
         .delete()
         .eq('id', id)
       return { data, error }

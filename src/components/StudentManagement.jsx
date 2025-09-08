@@ -120,16 +120,15 @@ const StudentManagement = () => {
   }
 
   return (
-    <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937' }}>
-          <Users size={32} style={{ marginRight: '12px', verticalAlign: 'middle' }} />
+    <div className="p-8 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="flex items-center">
+          <Users size={32} className="mr-3" />
           Student Management
         </h1>
         <button
           onClick={() => setShowEnrollmentForm(true)}
-          className="btn btn-primary"
-          style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+          className="btn btn-primary flex items-center gap-2"
         >
           <Plus size={20} />
           Enroll Student
@@ -137,13 +136,13 @@ const StudentManagement = () => {
       </div>
 
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '24px' }}>
+        <div className="alert alert-error">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="alert alert-success" style={{ marginBottom: '24px' }}>
+        <div className="alert alert-success">
           {success}
         </div>
       )}
@@ -165,25 +164,19 @@ const StudentManagement = () => {
       )}
 
       {/* Filters */}
-      <div className="card" style={{ marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="card mb-6">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
             <Filter size={20} />
-            <span style={{ fontWeight: '600' }}>Filters:</span>
+            <span className="font-semibold text-gray-800 dark:text-gray-100">Filters:</span>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>School Year:</label>
+          <div className="flex items-center gap-2">
+            <label className="form-label">School Year:</label>
             <select
               value={filters.schoolYear}
               onChange={(e) => handleFilterChange('schoolYear', e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                minWidth: '120px'
-              }}
+              className="form-input"
             >
               <option value="">All Years</option>
               {schoolYears.map(year => (
@@ -192,18 +185,12 @@ const StudentManagement = () => {
             </select>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>Grade Level:</label>
+          <div className="flex items-center gap-2">
+            <label className="form-label">Grade Level:</label>
             <select
               value={filters.gradeLevel}
               onChange={(e) => handleFilterChange('gradeLevel', e.target.value)}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px',
-                minWidth: '120px'
-              }}
+              className="form-input"
             >
               <option value="">All Grades</option>
               {gradeLevels.map(grade => (
@@ -215,8 +202,7 @@ const StudentManagement = () => {
           {(filters.schoolYear || filters.gradeLevel) && (
             <button
               onClick={clearFilters}
-              className="btn btn-secondary"
-              style={{ fontSize: '14px', padding: '8px 16px' }}
+              className="btn btn-secondary text-sm py-2 px-4"
             >
               Clear Filters
             </button>
@@ -226,82 +212,72 @@ const StudentManagement = () => {
 
       {/* Students List */}
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
-            Students ({totalCount})
-          </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Students ({totalCount})</h2>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{ fontSize: '14px', fontWeight: '500' }}>Show:</label>
+          <div className="flex items-center gap-2">
+            <label className="form-label">Show:</label>
             <select
               value={pageSize}
               onChange={(e) => handlePageSizeChange(e.target.value)}
-              style={{
-                padding: '6px 10px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
+              className="form-input"
             >
               <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </select>
-            <span style={{ fontSize: '14px' }}>per page</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">per page</span>
           </div>
         </div>
         
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
+          <div className="text-center p-10">
             <LoadingSpinner />
           </div>
         ) : students.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            <User size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+          <div className="text-center p-10 text-gray-500 dark:text-gray-400">
+            <User size={48} className="mb-4 opacity-50 mx-auto" />
             <p>No students found.</p>
             {(filters.schoolYear || filters.gradeLevel) ? (
-              <p>Try adjusting your filters or <button onClick={clearFilters} style={{ color: '#3b82f6', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>clear all filters</button>.</p>
+              <p>Try adjusting your filters or <button onClick={clearFilters} className="text-blue-600 underline bg-transparent border-none cursor-pointer">clear all filters</button>.</p>
             ) : (
               <p>Click "Enroll Student" to get started.</p>
             )}
           </div>
         ) : (
           <>
-            <div style={{ overflowX: 'auto' }}>
-              <table className="table-responsive" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="overflow-x-auto">
+              <table className="data-table">
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>LRN No.</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Last Name</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>First Name</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Middle Name</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Extension Name</th>
-                    <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Sex</th>
+                  <tr >
+                    <th>LRN No.</th>
+                    <th>Last Name</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Extension Name</th>
+                    <th>Sex</th>
                   </tr>
                 </thead>
                 <tbody>
                   {students.map((student, index) => (
-                    <tr key={student.id} style={{ 
-                      borderBottom: '1px solid #e5e7eb',
-                      backgroundColor: index % 2 === 0 ? '#f9fafb' : 'white'
-                    }}>
-                      <td style={{ padding: '12px', fontFamily: 'monospace' }}>
+                    <tr key={student.id} className="border-b border-gray-300 dark:border-gray-700 odd:bg-gray-100 dark:odd:bg-gray-800/50">
+                      <td className="p-3 font-mono text-gray-700 dark:text-gray-200">
                         {student.learner_reference_number || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px', fontWeight: '600' }}>
+                      <td className="p-3 font-semibold text-gray-800 dark:text-gray-100">
                         {student.last_name || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px' }}>
+                      <td className="p-3 text-gray-700 dark:text-gray-200">
                         {student.first_name || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px' }}>
+                      <td className="p-3 text-gray-700 dark:text-gray-200">
                         {student.middle_name || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px' }}>
+                      <td className="p-3 text-gray-700 dark:text-gray-200">
                         {student.extension_name || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px' }}>
+                      <td className="p-3 text-gray-700 dark:text-gray-200">
                         {student.sex || 'N/A'}
                       </td>
                     </tr>
@@ -312,33 +288,16 @@ const StudentManagement = () => {
             
             {/* Pagination */}
             {totalPages > 1 && (
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                marginTop: '24px',
-                padding: '16px 0',
-                borderTop: '1px solid #e5e7eb'
-              }}>
-                <div style={{ fontSize: '14px', color: '#6b7280' }}>
+              <div className="flex justify-between items-center mt-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      backgroundColor: currentPage === 1 ? '#f3f4f6' : 'white',
-                      color: currentPage === 1 ? '#9ca3af' : '#374151',
-                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:bg-gray-900 dark:disabled:text-gray-500 flex items-center gap-1"
                   >
                     <ChevronLeft size={16} />
                     Previous
@@ -348,15 +307,9 @@ const StudentManagement = () => {
                     <button
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
-                      style={{
-                        padding: '8px 12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        backgroundColor: pageNum === currentPage ? '#3b82f6' : 'white',
-                        color: pageNum === currentPage ? 'white' : '#374151',
-                        cursor: 'pointer',
-                        minWidth: '40px'
-                      }}
+                      className={`px-3 py-2 border rounded-md min-w-[40px] ${pageNum === currentPage 
+                        ? 'bg-blue-600 text-white border-blue-600' 
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700'}`}
                     >
                       {pageNum}
                     </button>
@@ -365,17 +318,7 @@ const StudentManagement = () => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    style={{
-                      padding: '8px 12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      backgroundColor: currentPage === totalPages ? '#f3f4f6' : 'white',
-                      color: currentPage === totalPages ? '#9ca3af' : '#374151',
-                      cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
+                    className="px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:bg-gray-900 dark:disabled:text-gray-500 flex items-center gap-1"
                   >
                     Next
                     <ChevronRight size={16} />

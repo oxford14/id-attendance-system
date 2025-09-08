@@ -90,12 +90,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8">
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+        <h1>
           Welcome back, {user?.user_metadata?.full_name || user?.email}
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '18px' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '18px' }}>
           Here's what's happening with your attendance system today.
         </p>
       </div>
@@ -113,7 +113,7 @@ const Dashboard = () => {
           <h3 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
             {stats.totalStudents}
           </h3>
-          <p style={{ color: '#6b7280' }}>Total Students</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Total Students</p>
         </div>
 
         <div className="card" style={{ textAlign: 'center' }}>
@@ -121,7 +121,7 @@ const Dashboard = () => {
           <h3 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
             {stats.todayAttendance}
           </h3>
-          <p style={{ color: '#6b7280' }}>Today's Attendance</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Today's Attendance</p>
         </div>
 
         <div className="card" style={{ textAlign: 'center' }}>
@@ -129,7 +129,7 @@ const Dashboard = () => {
           <h3 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
             {stats.totalAttendance}
           </h3>
-          <p style={{ color: '#6b7280' }}>Total Records</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Total Records</p>
         </div>
 
         <div className="card" style={{ textAlign: 'center' }}>
@@ -137,7 +137,7 @@ const Dashboard = () => {
           <h3 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
             {stats.attendanceRate}%
           </h3>
-          <p style={{ color: '#6b7280' }}>Today's Rate</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Today's Rate</p>
         </div>
       </div>
 
@@ -172,13 +172,13 @@ const Dashboard = () => {
                   width: '100%',
                   maxWidth: '40px',
                   height: `${height}px`,
-                  backgroundColor: isToday ? '#3b82f6' : '#e5e7eb',
+                  backgroundColor: isToday ? '#3b82f6' : 'var(--border-color)',
                   borderRadius: '4px 4px 0 0',
                   marginBottom: '8px',
                   display: 'flex',
                   alignItems: 'end',
                   justifyContent: 'center',
-                  color: isToday ? 'white' : '#374151',
+                  color: isToday ? 'white' : 'var(--text-primary)',
                   fontSize: '12px',
                   fontWeight: '600',
                   paddingBottom: '4px'
@@ -188,7 +188,7 @@ const Dashboard = () => {
                 <div style={{ 
                   fontSize: '12px', 
                   fontWeight: '500',
-                  color: isToday ? '#3b82f6' : '#6b7280'
+                  color: isToday ? '#3b82f6' : 'var(--text-secondary)'
                 }}>
                   {day.day}
                 </div>
@@ -200,7 +200,7 @@ const Dashboard = () => {
         <div style={{ 
           marginTop: '16px', 
           textAlign: 'center', 
-          color: '#6b7280', 
+          color: 'var(--text-secondary)', 
           fontSize: '14px' 
         }}>
           Last 7 days attendance • Today highlighted in blue
@@ -215,7 +215,7 @@ const Dashboard = () => {
         </h2>
         
         {recentAttendance.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
             <UserCheck size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
             <p>No attendance records yet.</p>
             <p>Students will appear here when they scan their RF IDs.</p>
@@ -224,7 +224,7 @@ const Dashboard = () => {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
+                <tr style={{ borderBottom: '2px solid var(--border-color)' }}>
                   <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Student</th>
                   <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>RF ID</th>
                   <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Time</th>
@@ -234,8 +234,8 @@ const Dashboard = () => {
               <tbody>
                 {recentAttendance.map((record, index) => (
                   <tr key={record.id} style={{ 
-                    borderBottom: '1px solid #e5e7eb',
-                    backgroundColor: index % 2 === 0 ? '#f9fafb' : 'white'
+                    borderBottom: '1px solid var(--border-color)',
+                    backgroundColor: index % 2 === 0 ? 'var(--bg-secondary)' : 'var(--bg-card)'
                   }}>
                     <td style={{ padding: '12px' }}>
                       {record.students?.first_name} {record.students?.last_name}

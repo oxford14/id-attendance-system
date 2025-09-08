@@ -33,7 +33,7 @@ const AttendanceRecords = () => {
       if (attendanceError) throw attendanceError
       
       // Load students for filter dropdown
-      const { data: studentsData, error: studentsError } = await db.students.getAll()
+      const { data: studentsData, error: studentsError } = await db.studentProfiles.getAll()
       if (studentsError) throw studentsError
       
       setRecords(attendanceData || [])
@@ -51,7 +51,7 @@ const AttendanceRecords = () => {
 
     // Filter by student
     if (filters.studentId) {
-      filtered = filtered.filter(record => record.student_id === filters.studentId)
+      filtered = filtered.filter(record => record.learner_reference_number === filters.studentId)
     }
 
     // Filter by date range
@@ -73,9 +73,9 @@ const AttendanceRecords = () => {
     if (filters.searchTerm) {
       const searchLower = filters.searchTerm.toLowerCase()
       filtered = filtered.filter(record => {
-        const studentName = `${record.students?.first_name} ${record.students?.last_name}`.toLowerCase()
+        const studentName = `${record.student_profile?.first_name} ${record.student_profile?.last_name}`.toLowerCase()
         return studentName.includes(searchLower) || 
-               record.students?.rfid_tag?.toLowerCase().includes(searchLower)
+               record.rfid_tag?.toLowerCase().includes(searchLower)
       })
     }
 
@@ -103,9 +103,9 @@ const AttendanceRecords = () => {
     const csvData = filteredRecords.map(record => [
       new Date(record.created_at).toLocaleDateString(),
       new Date(record.created_at).toLocaleTimeString(),
-      `${record.students?.first_name} ${record.students?.last_name}`,
-      record.students?.grade,
-      record.students?.rfid_tag,
+      `${record.student_profile?.first_name} ${record.student_profile?.last_name}`,
+      record.student_profile?.grade_level,
+      record.rfid_tag,
       'Present'
     ])
 
@@ -158,56 +158,56 @@ const AttendanceRecords = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+      <div className="mb-8">
+        <h1>
           Attendance Records
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '18px' }}>
+        <p className="text-lg text-muted">
           View and manage attendance history
         </p>
       </div>
 
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '24px' }}>
+        <div className="alert alert-error mb-6">
           {error}
         </div>
       )}
 
       {/* Statistics Cards */}
       <div className="stats-grid">
-        <div className="card" style={{ textAlign: 'center' }}>
-          <h3 style={{ fontSize: '28px', fontWeight: 'bold', color: '#3b82f6' }}>
+        <div className="card text-center">
+          <h3 className="text-2xl font-bold stats-total">
             {stats.total}
           </h3>
-          <p style={{ color: '#6b7280' }}>Total Records</p>
+          <p className="text-muted">Total Records</p>
         </div>
         
-        <div className="card" style={{ textAlign: 'center' }}>
-          <h3 style={{ fontSize: '28px', fontWeight: 'bold', color: '#10b981' }}>
+        <div className="card text-center">
+          <h3 className="text-2xl font-bold stats-today">
             {stats.today}
           </h3>
-          <p style={{ color: '#6b7280' }}>Today</p>
+          <p className="text-muted">Today</p>
         </div>
         
-        <div className="card" style={{ textAlign: 'center' }}>
-          <h3 style={{ fontSize: '28px', fontWeight: 'bold', color: '#f59e0b' }}>
+        <div className="card text-center">
+          <h3 className="text-2xl font-bold stats-week">
             {stats.week}
           </h3>
-          <p style={{ color: '#6b7280' }}>This Week</p>
+          <p className="text-muted">This Week</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="card" style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }}>
-          <Filter size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+      <div className="card mb-6">
+        <h2 className="text-xl font-bold mb-5 flex items-center">
+          <Filter size={20} className="mr-2" />
           Filters
         </h2>
         
         <div className="filter-grid">
           <div className="form-group">
-            <label className="form-label">
-              <Search size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            <label className="form-label flex items-center">
+              <Search size={16} className="mr-2" />
               Search Student
             </label>
             <input
@@ -230,16 +230,16 @@ const AttendanceRecords = () => {
             >
               <option value="">All Students</option>
               {students.map(student => (
-                <option key={student.id} value={student.id}>
-                  {student.first_name} {student.last_name} - {student.grade}
-                </option>
+                <option key={student.learner_reference_number} value={student.learner_reference_number}>
+                    {student.first_name} {student.last_name} - {student.grade_level}
+                  </option>
               ))}
             </select>
           </div>
           
           <div className="form-group">
-            <label className="form-label">
-              <Calendar size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            <label className="form-label flex items-center">
+              <Calendar size={16} className="mr-2" />
               From Date
             </label>
             <input
@@ -252,8 +252,8 @@ const AttendanceRecords = () => {
           </div>
           
           <div className="form-group">
-            <label className="form-label">
-              <Calendar size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+            <label className="form-label flex items-center">
+              <Calendar size={16} className="mr-2" />
               To Date
             </label>
             <input
@@ -264,38 +264,37 @@ const AttendanceRecords = () => {
               onChange={handleFilterChange}
             />
           </div>
-        </div>
-        
-        <div className="btn-group">
-          <button
-            onClick={clearFilters}
-            className="btn btn-secondary"
-          >
-            Clear Filters
-          </button>
           
-          <button
-            onClick={exportToCSV}
-            className="btn btn-primary"
-            style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-            disabled={filteredRecords.length === 0}
-          >
-            <Download size={16} />
-            Export CSV
-          </button>
+          <div className="form-group flex gap-2 items-end">
+            <button
+              onClick={clearFilters}
+              className="btn btn-secondary flex-1"
+            >
+              Clear Filters
+            </button>
+            
+            <button
+              onClick={exportToCSV}
+              className="btn btn-primary flex items-center gap-2 flex-1"
+              disabled={filteredRecords.length === 0}
+            >
+              <Download size={16} />
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Records Table */}
       <div className="card">
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '24px' }}>
-          <FileText size={24} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+        <h2 className="text-2xl font-bold mb-6 flex items-center">
+          <FileText size={24} className="mr-2" />
           Records ({filteredRecords.length})
         </h2>
         
         {filteredRecords.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            <FileText size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+          <div className="text-center p-10 text-muted">
+            <FileText size={48} className="mb-4 opacity-50" />
             <p>No attendance records found.</p>
             {Object.values(filters).some(filter => filter) ? (
               <p>Try adjusting your filters or clearing them.</p>
@@ -304,52 +303,42 @@ const AttendanceRecords = () => {
             )}
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="table-responsive" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="overflow-x-auto">
+            <table className="data-table">
               <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Date</th>
-                  <th className="hide-mobile" style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Time</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Student</th>
-                  <th className="hide-mobile" style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Grade</th>
-                  <th className="hide-mobile" style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>RF ID</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Status</th>
+                <tr>
+                  <th className="p-3 text-left font-semibold">Date</th>
+                  <th className="hide-mobile p-3 text-left font-semibold">Time</th>
+                  <th className="p-3 text-left font-semibold">Student</th>
+                  <th className="hide-mobile p-3 text-left font-semibold">Grade</th>
+                  <th className="hide-mobile p-3 text-left font-semibold">RF ID</th>
+                  <th className="p-3 text-left font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredRecords.map((record, index) => {
                   const { date, time } = formatDateTime(record.created_at)
                   return (
-                    <tr key={record.id} style={{ 
-                      borderBottom: '1px solid #e5e7eb',
-                      backgroundColor: index % 2 === 0 ? '#f9fafb' : 'white'
-                    }}>
-                      <td style={{ padding: '12px' }}>
+                    <tr key={record.id}>
+                      <td className="p-3">
                         <div>{date}</div>
-                        <div className="hide-mobile" style={{ fontSize: '12px', color: '#6b7280' }}>{time}</div>
+                        <div className="hide-mobile text-xs text-muted">{time}</div>
                       </td>
-                      <td className="hide-mobile" style={{ padding: '12px' }}>{time}</td>
-                      <td style={{ padding: '12px' }}>
-                        <div style={{ fontWeight: '600' }}>
-                          {record.students?.first_name} {record.students?.last_name}
+                      <td className="hide-mobile p-3">{time}</td>
+                      <td className="p-3">
+                        <div className="font-semibold">
+                          {record.student_profile?.first_name} {record.student_profile?.last_name}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#6b7280', display: 'block' }} className="show-mobile">
-                          {record.students?.grade} • {record.students?.rfid_tag}
+                        <div className="text-xs text-muted block show-mobile">
+                          {record.student_profile?.grade} • {record.rfid_tag}
                         </div>
                       </td>
-                      <td className="hide-mobile" style={{ padding: '12px' }}>{record.students?.grade}</td>
-                      <td className="hide-mobile" style={{ padding: '12px', fontFamily: 'monospace' }}>
-                        {record.students?.rfid_tag}
+                      <td className="hide-mobile p-3">{record.student_profile?.grade_level}</td>
+                      <td className="hide-mobile p-3 font-mono">
+                        {record.rfid_tag}
                       </td>
-                      <td style={{ padding: '12px' }}>
-                        <span style={{
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          backgroundColor: '#d1fae5',
-                          color: '#065f46'
-                        }}>
+                      <td className="p-3">
+                        <span className="status-present">
                           Present
                         </span>
                       </td>

@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import AuthProvider from './contexts/AuthContext'
 import StudentProvider from './contexts/StudentContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { useAuth } from './hooks/useAuth'
 import Navbar from './components/Navbar'
 import Login from './components/Login'
@@ -48,7 +49,7 @@ const AppContent = () => {
     <Router>
       <div className="App">
         {user && <Navbar />}
-        <main className="container">
+        <main className={`container ${user ? 'main-content' : ''}`}>
           <Routes>
             {/* Public Routes */}
             <Route path="/login" element={
@@ -119,6 +120,7 @@ const AppContent = () => {
                 <RFIDManagement />
               </ProtectedRoute>
             } />
+
             
             {/* Catch all route */}
             <Route path="*" element={
@@ -131,14 +133,16 @@ const AppContent = () => {
   )
 }
 
-// Main App Component with AuthProvider and StudentProvider
+// Main App Component with ThemeProvider, AuthProvider and StudentProvider
 function App() {
   return (
-    <AuthProvider>
-      <StudentProvider>
-        <AppContent />
-      </StudentProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <StudentProvider>
+          <AppContent />
+        </StudentProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 

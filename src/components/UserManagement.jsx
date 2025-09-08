@@ -116,11 +116,19 @@ const UserManagement = () => {
   }
 
   return (
+<<<<<<< HEAD
     <div className="container" style={{ padding: '40px 20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
             <Users size={32} style={{ color: '#3b82f6' }} />
+=======
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div className="mb-4 sm:mb-0">
+          <h1 className="flex items-center gap-3">
+            <Users size={32} className="text-blue-600" />
+>>>>>>> 2260399 (Side Menu Bar and Light and Dark Theme)
             User Management
           </h1>
           <p style={{ color: '#6b7280' }}>Manage system users and their permissions</p>
@@ -244,6 +252,7 @@ const UserManagement = () => {
         </div>
       )}
 
+<<<<<<< HEAD
       <div className="card">
         <h3 style={{ marginBottom: '20px' }}>Existing Users</h3>
         
@@ -299,6 +308,99 @@ const UserManagement = () => {
                 ))}
               </tbody>
             </table>
+=======
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Existing Users</h3>
+        
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading users...</p>
+          </div>
+        ) : users.length === 0 ? (
+          <div className="text-center py-12">
+            <Users size={48} className="text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400">No users found</p>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">User</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{isAdmin() ? 'Actions' : ''}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+                {users.map((userData) => {
+                  const fullName = userData.user_metadata?.full_name || 'N/A';
+                  const initials = fullName !== 'N/A' 
+                    ? fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                    : 'NA';
+                  
+                  return (
+                    <tr key={userData.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                            {initials}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium  truncate" style={{color:'var(--color-text)'}}>{fullName}</div>
+                            <div className="text-sm truncate" style={{color:'var(--color-text)'}}>{userData.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                          userData.role === 'admin' 
+                            ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800' 
+                            : 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+                        }`}>
+                          {userData.role || 'user'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {new Date(userData.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {isAdmin() && (
+                        <div className="flex space-x-2">
+                          <button
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 focus:ring-2 focus:ring-blue-500 transition-colors"
+                            onClick={() => handleEditUser(userData)}
+                          >
+                            <Edit size={12} />
+                            Edit
+                          </button>
+                          <button
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 focus:ring-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => handleDeleteUser(userData.id)}
+                            disabled={userData.id === user?.id}
+                            title={userData.id === user?.id ? 'Cannot delete yourself' : 'Delete user'}
+                          >
+                            <Trash2 size={12} />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                      </td>
+                    </tr>
+                  );
+                })}
+                </tbody>
+              </table>
+            </div>
+>>>>>>> 2260399 (Side Menu Bar and Light and Dark Theme)
           </div>
         )}
       </div>

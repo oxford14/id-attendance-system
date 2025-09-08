@@ -63,7 +63,7 @@ const NotificationSettings = () => {
   return (
     <div>
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+        <h1>
           Notification Settings
         </h1>
         <p style={{ color: '#6b7280', fontSize: '18px' }}>

@@ -72,7 +72,7 @@ const Register = () => {
       <div className="card" style={{ width: '100%', maxWidth: '400px', margin: '20px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <UserPlus size={48} style={{ color: '#3b82f6', marginBottom: '16px' }} />
-          <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <h1>
             Create Account
           </h1>
           <p style={{ color: '#6b7280' }}>
