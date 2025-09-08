@@ -264,10 +264,10 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="rounded-xl shadow-lg overflow-hidden" style={{backgroundColor: 'var(--color-bg-primary)'}}>
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-8 py-8">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-white mb-3">Student Enrollment</h1>
+              <h1 className="text-white">Student Enrollment</h1>
               <p className="text-primary-100">Complete your registration for Basic Education</p>
               <p className="text-primary-200 text-sm mt-2">All fields marked with * are required</p>
             </div>
@@ -287,7 +287,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             )}
             
             {/* Enrollment Information */}
-            <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
+            <div className="rounded-xl shadow-sm p-8 border border-primary-100" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
                 <GraduationCap className="w-7 h-7 text-primary-600" />
                 Enrollment Information
@@ -295,7 +295,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     School Year *
                   </label>
                   <input
@@ -311,7 +311,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Grade Level to Enroll *
                   </label>
                   <select
@@ -349,7 +349,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     onChange={handleInputChange}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <label htmlFor="withLRN" className="text-sm font-medium text-gray-700">
+                  <label htmlFor="withLRN" className="text-sm font-medium" style={{color: 'var(--color-text)'}}>
                     With LRN?
                   </label>
                   <div className="flex space-x-4 ml-4">
@@ -362,7 +362,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={(e) => setFormData(prev => ({ ...prev, withLRN: true }))}
                         className="mr-2"
                       />
-                      <span className="text-sm text-gray-600">Yes</span>
+                      <span className="text-sm" style={{color: 'var(--color-text)'}}>Yes</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -373,7 +373,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={(e) => setFormData(prev => ({ ...prev, withLRN: false }))}
                         className="mr-2"
                       />
-                      <span className="text-sm text-gray-600">No</span>
+                      <span className="text-sm" style={{color: 'var(--color-text)'}}>No</span>
                     </label>
                   </div>
                 </div>
@@ -387,7 +387,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     onChange={handleInputChange}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <label htmlFor="returningStudent" className="text-sm font-medium text-gray-700">
+                  <label htmlFor="returningStudent" className="text-sm font-medium" style={{color: 'var(--color-text)'}}>
                     Returning (Balik-Aral)
                   </label>
                   <div className="flex space-x-4 ml-4">
@@ -400,7 +400,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={(e) => setFormData(prev => ({ ...prev, returningStudent: true }))}
                         className="mr-2"
                       />
-                      <span className="text-sm text-gray-600">Yes</span>
+                      <span className="text-sm" style={{color: 'var(--color-text)'}}>Yes</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -411,7 +411,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={(e) => setFormData(prev => ({ ...prev, returningStudent: false }))}
                         className="mr-2"
                       />
-                      <span className="text-sm text-gray-600">No</span>
+                      <span className="text-sm" style={{color: 'var(--color-text)'}}>No</span>
                     </label>
                   </div>
                 </div>
@@ -419,7 +419,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             </div>
             
             {/* Learner Information */}
-            <div className="bg-white rounded-xl shadow-sm p-8 border border-primary-100">
+            <div className="rounded-xl shadow-sm p-8 border border-primary-100" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
                 <GraduationCap className="w-7 h-7 text-primary-600" />
                 Learner Information
@@ -439,7 +439,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="PSA Birth Certificate Number"
                   />
-                  <p className="text-xs text-gray-500 mt-1">If available upon registration</p>
+                  <p className="text-xs text-primary-500 mt-1">If available upon registration</p>
                 </div>
 
                 <div>
@@ -460,7 +460,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                       e.target.value = e.target.value.replace(/[^0-9]/g, '');
                     }}
                   />
-                  <p className="text-xs text-gray-500 mt-1">Input 12 digit LRN</p>
+                  <p className="text-xs text-primary-500 mt-1">Input 12 digit LRN</p>
                 </div>
               </div>
 
@@ -586,7 +586,8 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     name="age"
                     value={formData.age}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  style={{backgroundColor: 'var(--color-bg-secondary)'}}
                     placeholder="Auto-Calculated"
                     readOnly
                   />
@@ -607,7 +608,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Sex *
                   </label>
                   <select
@@ -624,7 +625,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Mother Tongue
                   </label>
                   <input
@@ -639,7 +640,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
 
                 {/* IP Community */}
                 <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Belonging to any Indigenous Peoples (IP) Community/Indigenous Cultural Community
                   </label>
                   <div className="flex items-center gap-4">
@@ -652,7 +653,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={() => setFormData(prev => ({ ...prev, belongsToIpCommunity: true }))}
                         className="form-radio h-4 w-4 text-blue-600"
                       />
-                      <span className="ml-2 text-sm text-gray-700">Yes</span>
+                      <span className="ml-2 text-sm" style={{color: 'var(--color-text)'}}>Yes</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -663,12 +664,12 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={() => setFormData(prev => ({ ...prev, belongsToIpCommunity: false, ipCommunityName: '' }))}
                         className="form-radio h-4 w-4 text-blue-600"
                       />
-                      <span className="ml-2 text-sm text-gray-700">No</span>
+                      <span className="ml-2 text-sm" style={{color: 'var(--color-text)'}}>No</span>
                     </label>
                   </div>
                   {formData.belongsToIpCommunity && (
                     <div className="mt-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium mb-1" style={{color: 'var(--color-text)'}}>
                         If Yes, please specify:
                       </label>
                       <input
@@ -685,7 +686,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
 
                 {/* 4Ps Beneficiary */}
                 <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Is your family a beneficiary of 4Ps?
                   </label>
                   <div className="flex items-center gap-4">
@@ -698,7 +699,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={() => setFormData(prev => ({ ...prev, is4psBeneficiary: true }))}
                         className="form-radio h-4 w-4 text-blue-600"
                       />
-                      <span className="ml-2 text-sm text-gray-700">Yes</span>
+                      <span className="ml-2 text-sm" style={{color: 'var(--color-text)'}}>Yes</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -709,12 +710,12 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                         onChange={() => setFormData(prev => ({ ...prev, is4psBeneficiary: false, fourPsHouseholdId: '' }))}
                         className="form-radio h-4 w-4 text-blue-600"
                       />
-                      <span className="ml-2 text-sm text-gray-700">No</span>
+                      <span className="ml-2 text-sm" style={{color: 'var(--color-text)'}}>No</span>
                     </label>
                   </div>
                   {formData.is4psBeneficiary && (
                     <div className="mt-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium mb-1" style={{color: 'var(--color-text)'}}>
                         If Yes, write the 4Ps Household ID Number below
                       </label>
                       <input
@@ -732,7 +733,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             </div>
             
             {/* Current Address */}
-            <div className="bg-white border border-gray-200 rounded-md p-6">
+            <div className="border border-gray-200 rounded-md p-6" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
                 <MapPin className="w-7 h-7 text-primary-600" />
                 Current Address
@@ -740,7 +741,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     House No./Street
                   </label>
                   <input
@@ -754,7 +755,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Barangay
                   </label>
                   <input
@@ -768,7 +769,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Municipality/City
                   </label>
                   <input
@@ -782,7 +783,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Province
                   </label>
                   <input
@@ -796,7 +797,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Country
                   </label>
                   <input
@@ -810,7 +811,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     ZIP Code
                   </label>
                   <input
@@ -826,10 +827,10 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             </div>
             
             {/* Permanent Address */}
-            <div className="bg-white border border-gray-200 rounded-md p-6">
+            <div className="border border-gray-200 rounded-md p-6" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-gray-500" />
+                <h2 className="text-lg font-medium text-primary-900 flex items-center">
+                  <MapPin className="w-7 h-7 text-primary-600" />
                   Permanent Address
                 </h2>
                 <label className="flex items-center space-x-2">
@@ -839,13 +840,13 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     onChange={handleCopyAddress}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-600">Same as current address</span>
+                  <span className="text-sm" style={{color: 'var(--color-text)'}}>Same as current address</span>
                 </label>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     House No./Street
                   </label>
                   <input
@@ -859,7 +860,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Barangay
                   </label>
                   <input
@@ -873,7 +874,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Municipality/City
                   </label>
                   <input
@@ -887,7 +888,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Province
                   </label>
                   <input
@@ -901,7 +902,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Country
                   </label>
                   <input
@@ -915,7 +916,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     ZIP Code
                   </label>
                   <input
@@ -931,7 +932,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             </div>
             
             {/* Parent/Guardian Information */}
-            <div className="bg-white border border-gray-200 rounded-md p-6">
+            <div className="border border-gray-200 rounded-md p-6" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
                 <Users className="w-7 h-7 text-primary-600" />
                 Parent/Guardian Information
@@ -939,10 +940,10 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               {/* Father Information */}
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-700 mb-3">Father's Information</h3>
+                <h3 className="text-lg font-medium mb-3" style={{color: 'var(--color-text)'}}>Father's Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Last Name
                     </label>
                     <input
@@ -956,7 +957,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       First Name
                     </label>
                     <input
@@ -970,7 +971,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Middle Name
                     </label>
                     <input
@@ -984,7 +985,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Contact Number
                     </label>
                     <div className="relative">
@@ -1004,10 +1005,10 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               {/* Mother Information */}
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-700 mb-3">Mother's Information</h3>
+                <h3 className="text-lg font-medium mb-3" style={{color: 'var(--color-text)'}}>Mother's Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Last Name
                     </label>
                     <input
@@ -1021,7 +1022,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       First Name
                     </label>
                     <input
@@ -1035,7 +1036,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Middle Name
                     </label>
                     <input
@@ -1049,7 +1050,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Contact Number
                     </label>
                     <div className="relative">
@@ -1069,10 +1070,10 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               {/* Guardian Information */}
               <div>
-                <h3 className="text-lg font-medium text-gray-700 mb-3">Guardian's Information (if applicable)</h3>
+                <h3 className="text-lg font-medium mb-3" style={{color: 'var(--color-text)'}}>Guardian's Information (if applicable)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Last Name
                     </label>
                     <input
@@ -1086,7 +1087,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       First Name
                     </label>
                     <input
@@ -1100,7 +1101,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Middle Name
                     </label>
                     <input
@@ -1114,7 +1115,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                       Contact Number
                     </label>
                     <div className="relative">
@@ -1134,7 +1135,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
             </div>
             
             {/* Educational Background */}
-            <div className="bg-white border border-gray-200 rounded-md p-6">
+            <div className="border border-gray-200 rounded-md p-6" style={{backgroundColor: 'var(--color-bg-primary)'}}>
               <h2 className="text-2xl font-bold text-primary-900 mb-6 flex items-center gap-3">
                 <GraduationCap className="w-7 h-7 text-primary-600" />
                 Educational Background
@@ -1142,7 +1143,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Last Grade Level Completed
                   </label>
                   <input
@@ -1156,7 +1157,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Last School Year Completed
                   </label>
                   <input
@@ -1170,7 +1171,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     Last School Attended
                   </label>
                   <input
@@ -1184,7 +1185,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                     School ID
                   </label>
                   <input
@@ -1208,7 +1209,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     onChange={handleInputChange}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2"
                   />
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium" style={{color: 'var(--color-text)'}}>
                     Senior High School Completer
                   </label>
                 </div>
@@ -1216,7 +1217,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                 {formData.shsCompleter && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                         General Average
                       </label>
                       <input
@@ -1233,7 +1234,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                         Track
                       </label>
                       <select
@@ -1251,7 +1252,7 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium mb-2" style={{color: 'var(--color-text)'}}>
                         Strand
                       </label>
                       <input
@@ -1293,14 +1294,14 @@ const StudentEnrollment = ({ onCancel, onSuccess }) => {
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-xl">
+          <div className="rounded-lg p-8 max-w-md w-full mx-4 shadow-xl" style={{backgroundColor: 'var(--color-bg-primary)'}}>
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                 <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-medium mb-4" style={{color: 'var(--color-text)'}}>
                 Student Information Successfully Saved
               </h3>
               <button

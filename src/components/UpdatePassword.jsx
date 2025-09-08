@@ -75,7 +75,7 @@ const UpdatePassword = () => {
         <div className="card" style={{ width: '100%', maxWidth: '400px', margin: '20px' }}>
           <div style={{ textAlign: 'center' }}>
             <CheckCircle size={64} style={{ color: '#10b981', marginBottom: '24px' }} />
-            <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>
+            <h1>
               Password Updated Successfully!
             </h1>
             <p style={{ color: '#6b7280', marginBottom: '24px' }}>
@@ -102,7 +102,7 @@ const UpdatePassword = () => {
       <div className="card" style={{ width: '100%', maxWidth: '400px', margin: '20px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <Lock size={48} style={{ color: '#4f46e5', marginBottom: '16px' }} />
-          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <h1>
             Update Your Password
           </h1>
           <p style={{ color: '#6b7280' }}>

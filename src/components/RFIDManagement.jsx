@@ -144,14 +144,14 @@ const RFIDManagement = () => {
     if (student.rfid_tag) {
       return {
         status: 'assigned',
-        color: '#10b981',
+        className: 'text-green-500',
         icon: CheckCircle,
         text: 'Assigned'
       }
     } else {
       return {
         status: 'unassigned',
-        color: '#f59e0b',
+        className: 'text-amber-500',
         icon: AlertCircle,
         text: 'Not Assigned'
       }
@@ -163,39 +163,39 @@ const RFIDManagement = () => {
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '8px' }}>
+    <div className="p-4 md:p-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           RFID Management
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '18px' }}>
+        <p className="text-lg text-primary-600 dark:text-gray-400">
           Assign and manage RFID tags for students
         </p>
       </div>
 
       {/* Success/Error Messages */}
       {success && (
-        <div className="alert alert-success" style={{ marginBottom: '24px' }}>
-          <CheckCircle size={20} style={{ marginRight: '8px' }} />
+        <div className="alert alert-success mb-6">
+          <CheckCircle size={20} className="mr-2" />
           {success}
         </div>
       )}
       
       {error && (
-        <div className="alert alert-error" style={{ marginBottom: '24px' }}>
-          <AlertCircle size={20} style={{ marginRight: '8px' }} />
+        <div className="alert alert-error mb-6">
+          <AlertCircle size={20} className="mr-2" />
           {error}
         </div>
       )}
 
       {/* Search and Filters */}
-      <div className="card" style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '20px' }}>
-          <Search size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+      <div className="card mb-6" style={{backgroundColor: 'var(--color-bg-primary)'}}>
+        <h2 className="text-xl font-bold text-primary-700 dark:text-gray-200 mb-5 flex items-center">
+          <Search size={20} className="mr-2" />
           Search Students
         </h2>
         
-        <div className="filter-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="form-group">
             <label className="form-label">Search</label>
             <input
@@ -203,7 +203,7 @@ const RFIDManagement = () => {
               className="form-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by name or LRN"
+              placeholder="Search by Name or LRN"
             />
           </div>
           
@@ -237,12 +237,11 @@ const RFIDManagement = () => {
             </select>
           </div>
           
-          <div className="form-group" style={{ display: 'flex', alignItems: 'end' }}>
+          <div className="form-group flex items-end">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary w-full"
               onClick={clearFilters}
-              style={{ width: '100%' }}
             >
               Clear Filters
             </button>
@@ -252,31 +251,31 @@ const RFIDManagement = () => {
 
       {/* Students List */}
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 'bold' }}>
-            <Users size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-xl font-bold text-primary-700 dark:text-gray-200 flex items-center">
+            <Users size={20} className="mr-2" />
             Students ({filteredStudents.length})
           </h2>
         </div>
 
         {filteredStudents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            <Users size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
-            <p style={{ fontSize: '18px', marginBottom: '8px' }}>No students found</p>
+          <div className="text-center py-10 text-gray-700 dark:text-gray-300">
+            <Users size={48} className="mx-auto mb-4 opacity-50" />
+            <p className="text-lg font-semibold mb-2">No students found</p>
             <p>Try adjusting your search criteria or filters</p>
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="table-responsive" style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="overflow-x-auto">
+            <table className="data-table">
               <thead>
-                <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>LRN</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Student Name</th>
-                  <th className="hide-mobile" style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Grade Level</th>
-                  <th className="hide-mobile" style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>School Year</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>RFID Status</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>RFID Tag</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Actions</th>
+                <tr className="border-b-2 border-gray-200 dark:border-gray-700">
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200">LRN</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200">Student Name</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200 hide-mobile">Grade Level</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200 hide-mobile">School Year</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200">RFID Status</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200">RFID Tag</th>
+                  <th className="p-3 text-left font-semibold text-gray-800 dark:text-gray-200">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -285,50 +284,40 @@ const RFIDManagement = () => {
                   const StatusIcon = rfidStatus.icon
                   
                   return (
-                    <tr key={student.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '12px' }}>
-                        <span style={{ fontFamily: 'monospace', fontSize: '14px' }}>
+                    <tr key={student.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                      <td className="p-3">
+                        {/* <span className="font-mono text-sm text-primary-800 dark:text-gray-200"> */}
                           {student.learner_reference_number || 'N/A'}
-                        </span>
+                        {/* </span> */}
                       </td>
-                      <td style={{ padding: '12px' }}>
-                        <div>
-                          <div style={{ fontWeight: '500' }}>
-                            {student.last_name}, {student.first_name} {student.middle_name} {student.extension_name}
-                          </div>
-                        </div>
+                      <td className="p-3">
+                        {/* <div className="font-medium text-primary-700 dark:text-gray-100"> */}
+                          {student.last_name}, {student.first_name} {student.middle_name} {student.extension_name}
+                        {/* </div> */}
                       </td>
-                      <td className="hide-mobile" style={{ padding: '12px' }}>
+                      <td className="p-3 hide-mobile text-gray-800 dark:text-gray-200">
                         {student.grade_level || 'N/A'}
                       </td>
-                      <td className="hide-mobile" style={{ padding: '12px' }}>
+                      <td className="p-3 hide-mobile text-gray-800 dark:text-gray-200">
                         {student.school_year || 'N/A'}
                       </td>
-                      <td style={{ padding: '12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <StatusIcon size={16} style={{ color: rfidStatus.color, marginRight: '6px' }} />
-                          <span style={{ color: rfidStatus.color, fontWeight: '500' }}>
-                            {rfidStatus.text}
-                          </span>
+                      <td className="p-3">
+                        <div className={`flex items-center ${rfidStatus.className}`}>
+                          <StatusIcon size={16} className="mr-1.5" />
+                          <span className="font-medium">{rfidStatus.text}</span>
                         </div>
                       </td>
-                      <td style={{ padding: '12px' }}>
+                      <td className="p-3">
                         {student.rfid_tag ? (
-                          <span style={{ 
-                            fontFamily: 'monospace', 
-                            fontSize: '14px',
-                            backgroundColor: '#f3f4f6',
-                            padding: '4px 8px',
-                            borderRadius: '4px'
-                          }}>
+                          <span className="font-mono text-sm  dark:text-white bg-teal-100 dark:bg-teal-700 px-2 py-1 rounded">
                             {student.rfid_tag}
                           </span>
                         ) : (
-                          <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not assigned</span>
+                          <span className="text-red-900 dark:text-gray-400 italic">Not assigned</span>
                         )}
                       </td>
-                      <td style={{ padding: '12px' }}>
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                      <td className="p-3">
+                        <div className="flex gap-2">
                           <button
                             className="btn btn-sm btn-primary"
                             onClick={() => openAssignModal(student)}
@@ -358,58 +347,27 @@ const RFIDManagement = () => {
 
       {/* RFID Assignment Modal */}
       {showAssignModal && selectedStudent && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }} onClick={closeAssignModal}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '8px',
-            padding: '24px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            position: 'relative',
-            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)'
-          }} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px' }}>
-                <Tag size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                {selectedStudent.rfid_tag ? 'Update' : 'Assign'} RFID Tag
-              </h3>
-              <button 
-                onClick={closeAssignModal}
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '4px',
-                  borderRadius: '4px'
-                }}
-              >
-                <X size={20} />
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={closeAssignModal}>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+                  <Tag size={20} className="mr-2" />
+                  {selectedStudent.rfid_tag ? 'Update' : 'Assign'} RFID Tag
+                </h3>
+                <button onClick={closeAssignModal} className="text-gray-500 hover:text-primary-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <X size={24} />
+                </button>
+              </div>
             
             <div>
-              <div style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
-                <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>Student Information</h4>
-                <p><strong>Name:</strong> {selectedStudent.first_name} {selectedStudent.middle_name} {selectedStudent.last_name} {selectedStudent.extension_name}</p>
-                <p><strong>LRN:</strong> {selectedStudent.learner_reference_number || 'N/A'}</p>
-                <p><strong>Grade:</strong> {selectedStudent.grade_level || 'N/A'}</p>
-                <p><strong>School Year:</strong> {selectedStudent.school_year || 'N/A'}</p>
+              <div className="mb-5 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Student Information</h4>
+                <p className="text-sm text-gray-800 dark:text-gray-200"><strong>Name:</strong> {selectedStudent.first_name} {selectedStudent.middle_name} {selectedStudent.last_name} {selectedStudent.extension_name}</p>
+                <p className="text-sm text-gray-800 dark:text-gray-200"><strong>LRN:</strong> {selectedStudent.learner_reference_number || 'N/A'}</p>
+                <p className="text-sm text-gray-800 dark:text-gray-200"><strong>Grade:</strong> {selectedStudent.grade_level || 'N/A'}</p>
+                <p className="text-sm text-gray-800 dark:text-gray-200"><strong>School Year:</strong> {selectedStudent.school_year || 'N/A'}</p>
                 {selectedStudent.rfid_tag && (
-                  <p><strong>Current RFID:</strong> <span style={{ fontFamily: 'monospace' }}>{selectedStudent.rfid_tag}</span></p>
+                  <p className="text-sm text-gray-800 dark:text-gray-200"><strong>Current RFID:</strong> <span className="font-mono">{selectedStudent.rfid_tag}</span></p>
                 )}
               </div>
               
@@ -418,18 +376,17 @@ const RFIDManagement = () => {
                   <label className="form-label">RFID Tag</label>
                   <input
                     type="text"
-                    className="form-input"
+                    className="form-input font-mono"
                     value={newRfId}
                     onChange={(e) => setNewRfId(e.target.value)}
                     placeholder="Enter RFID tag (e.g., 1234567890)"
                     required
                     disabled={assignLoading}
-                    style={{ fontFamily: 'monospace' }}
                   />
                   <p className="form-help">Enter the RFID tag number to assign to this student</p>
                 </div>
                 
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
+                <div className="flex gap-3 justify-end mt-6">
                   <button
                     type="button"
                     className="btn btn-secondary"

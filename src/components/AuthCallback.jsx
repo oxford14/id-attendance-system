@@ -83,7 +83,7 @@ const AuthCallback = () => {
         return (
           <>
             <Loader size={48} className="animate-spin" style={{ color: '#3b82f6', marginBottom: '16px' }} />
-            <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+            <h1>
               Confirming Email
             </h1>
             <p style={{ color: '#6b7280' }}>
@@ -96,7 +96,7 @@ const AuthCallback = () => {
         return (
           <>
             <CheckCircle size={48} style={{ color: '#10b981', marginBottom: '16px' }} />
-            <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+            <h1>
               Email Confirmed!
             </h1>
             <p style={{ color: '#6b7280' }}>
@@ -109,7 +109,7 @@ const AuthCallback = () => {
         return (
           <>
             <XCircle size={48} style={{ color: '#ef4444', marginBottom: '16px' }} />
-            <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px' }}>
+            <h1>
               Confirmation Failed
             </h1>
             <p style={{ color: '#6b7280', marginBottom: '24px' }}>
