@@ -671,13 +671,8 @@ const UserManagement = () => {
                             {initials}
                           </div>
                           <div className="min-w-0 flex-1">
-<<<<<<< HEAD
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{fullName}</div>
                             <div className="text-sm text-gray-600 dark:text-gray-400 truncate">{userData.email}</div>
-=======
-                            <div className="text-sm font-medium  truncate" style={{color:'var(--color-text)'}}>{fullName}</div>
-                            <div className="text-sm truncate" style={{color:'var(--color-text)'}}>{userData.email}</div>
->>>>>>> 2260399
                           </div>
                         </div>
                       </td>
