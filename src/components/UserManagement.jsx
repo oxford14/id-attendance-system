@@ -354,14 +354,14 @@ const UserManagement = () => {
   }
 
   return (
-     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-         <div>
-           <h1 className="flex items-center gap-3">
-             <Users size={32} className="text-blue-600" />
-             User Management
-           </h1>
-           <p className="text-gray-600 dark:text-gray-400 text-lg">Manage system users and their permissions</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+        <div className="mb-4 sm:mb-0">
+          <h1 className="flex items-center gap-3">
+            <Users size={32} className="text-blue-600" />
+            User Management
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">Manage system users and their permissions</p>
 
           {!isAdmin() && (
             <div className="mt-2">
@@ -402,11 +402,11 @@ const UserManagement = () => {
       )}
 
       {showCreateForm && isAdmin() && (
-         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6 mb-8">
-           <h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-6">
-             <Plus size={20} className="text-blue-600" />
-             Create New User
-           </h3>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6 mb-8">
+          <h3 className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-6">
+            <Plus size={20} className="text-blue-600" />
+            Create New User
+          </h3>
           
           <form onSubmit={handleCreateUser}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -416,10 +416,10 @@ const UserManagement = () => {
                   Full Name
                 </label>
                 <input
-                   type="text"
-                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
-                     formErrors.fullName ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                   }`}
+                  type="text"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    formErrors.fullName ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   value={formData.fullName}
                   onChange={(e) => {
                     setFormData({ ...formData, fullName: e.target.value });
@@ -436,15 +436,15 @@ const UserManagement = () => {
               </div>
 
               <div className="space-y-2">
-                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                   <Mail size={16} className="text-gray-500" />
-                   Email Address
-                 </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Mail size={16} className="text-gray-500" />
+                  Email Address
+                </label>
                 <input
                   type="email"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
-                     formErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                   }`}
+                    formErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   value={formData.email}
                   onChange={(e) => {
                     setFormData({ ...formData, email: e.target.value });
@@ -463,15 +463,15 @@ const UserManagement = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-2">
-                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                   <Lock size={16} className="text-gray-500" />
-                   Password
-                 </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Lock size={16} className="text-gray-500" />
+                  Password
+                </label>
                 <input
                   type="password"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
-                     formErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                   }`}
+                    formErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   value={formData.password}
                   onChange={(e) => {
                     setFormData({ ...formData, password: e.target.value });
@@ -489,10 +489,10 @@ const UserManagement = () => {
               </div>
 
               <div className="space-y-2">
-                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                   <Shield size={16} className="text-gray-500" />
-                   Role
-                 </label>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Shield size={16} className="text-gray-500" />
+                  Role
+                </label>
                 <select
                   className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                   value={formData.role}
@@ -505,9 +505,9 @@ const UserManagement = () => {
             </div>
 
             <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
-               <button
-                 type="button"
-                 className="px-6 py-2.5 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-200 transition-colors font-medium"
+              <button
+                type="button"
+                className="px-6 py-2.5 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-200 transition-colors font-medium"
                 onClick={() => {
                   setShowCreateForm(false)
                   setFormData({ email: '', password: '', role: 'user', fullName: '' })
@@ -531,8 +531,8 @@ const UserManagement = () => {
 
 
       {showEditForm && editingUser && isAdmin() && (
-         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6 mb-8">
-           <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6 mb-8">
+          <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-6">
             <Edit size={20} className="text-blue-600" />
             Edit User: {editingUser.email}
           </div>
@@ -541,14 +541,14 @@ const UserManagement = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                   <User size={16} className="text-gray-500" />
-                   Full Name
-                 </label>
+                  <User size={16} className="text-gray-500" />
+                  Full Name
+                </label>
                 <input
                   type="text"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
-                     editFormErrors.fullName ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                   }`}
+                    editFormErrors.fullName ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   value={editFormData.fullName}
                   onChange={(e) => {
                     setEditFormData({ ...editFormData, fullName: e.target.value });
@@ -566,14 +566,14 @@ const UserManagement = () => {
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                   <Mail size={16} className="text-gray-500" />
-                   Email Address
-                 </label>
+                  <Mail size={16} className="text-gray-500" />
+                  Email Address
+                </label>
                 <input
                   type="email"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
-                     editFormErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
-                   }`}
+                    editFormErrors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                   value={editFormData.email}
                   onChange={(e) => {
                     setEditFormData({ ...editFormData, email: e.target.value });
@@ -591,10 +591,10 @@ const UserManagement = () => {
             </div>
 
             <div className="space-y-2 mb-6">
-               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                 <Shield size={16} className="text-gray-500" />
-                 Role
-               </label>
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <Shield size={16} className="text-gray-500" />
+                Role
+              </label>
               <select
                 className="w-full max-w-xs px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 value={editFormData.role}
@@ -606,9 +606,9 @@ const UserManagement = () => {
             </div>
 
             <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
-               <button
-                 type="button"
-                 className="px-6 py-2.5 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-200 transition-colors font-medium"
+              <button
+                type="button"
+                className="px-6 py-2.5 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-200 transition-colors font-medium"
                 onClick={() => {
                   setShowEditForm(false)
                   setEditingUser(null)
@@ -671,8 +671,13 @@ const UserManagement = () => {
                             {initials}
                           </div>
                           <div className="min-w-0 flex-1">
+<<<<<<< HEAD
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{fullName}</div>
                             <div className="text-sm text-gray-600 dark:text-gray-400 truncate">{userData.email}</div>
+=======
+                            <div className="text-sm font-medium  truncate" style={{color:'var(--color-text)'}}>{fullName}</div>
+                            <div className="text-sm truncate" style={{color:'var(--color-text)'}}>{userData.email}</div>
+>>>>>>> 2260399
                           </div>
                         </div>
                       </td>
