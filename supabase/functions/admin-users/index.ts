@@ -11,7 +11,7 @@
 
 // deno-lint-ignore-file no-explicit-any
 
-/// <reference types="https://deno.land/x/deploy@1.8.0/types/deploy.d.ts" />
+// / <reference types="https://deno.land/x/deploy@1.8.0/types/deploy.d.ts" />
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
@@ -177,6 +177,14 @@ Deno.serve(async (req) => {
         if (!userId || !metadata) return json({ error: 'Missing userId or metadata' }, 400)
         const { error: updErr } = await supabaseAdmin.auth.admin.updateUserById(userId, { user_metadata: metadata })
         if (updErr) return json({ error: 'Failed to update metadata', details: updErr }, 400)
+        return json({ success: true })
+      }
+
+      case 'update-password': {
+        const { userId, password } = payload as { userId: string; password: string }
+        if (!userId || !password) return json({ error: 'Missing userId or password' }, 400)
+        const { error: updErr } = await supabaseAdmin.auth.admin.updateUserById(userId, { password })
+        if (updErr) return json({ error: 'Failed to update password', details: updErr }, 400)
         return json({ success: true })
       }
 

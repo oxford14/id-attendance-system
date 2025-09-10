@@ -92,19 +92,27 @@ const AuthProvider = ({ children }) => {
   const signOut = async () => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signOut();
       
-      if (error) {
-        throw error;
+      // Check if there's an active session before attempting to sign out
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          throw error;
+        }
       }
 
-      // Clear local state
+      // Clear local state regardless of session status
       setUser(null);
       setSession(null);
       
       return { error: null };
     } catch (error) {
       console.error('Sign out error:', error);
+      // Still clear local state even if signOut fails
+      setUser(null);
+      setSession(null);
       return { error };
     } finally {
       setLoading(false);

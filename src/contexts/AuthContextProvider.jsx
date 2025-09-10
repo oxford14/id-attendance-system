@@ -110,11 +110,23 @@ const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
+    try {
+      // Check if there's an active session before attempting to sign out
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Sign out error:', error);
+          return { error };
+        }
+      }
+      
+      return { error: null };
+    } catch (error) {
       console.error('Sign out error:', error);
+      return { error };
     }
-    return { error };
   };
 
   const resetPassword = async (email) => {

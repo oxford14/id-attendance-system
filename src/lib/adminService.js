@@ -13,7 +13,7 @@ import { supabase } from './supabase'
 const callAdminUsersFunction = async (action, payload = {}) => {
   try {
     const { data, error } = await supabase.functions.invoke('admin-users', {
-      body: { action, ...payload }
+      body: JSON.stringify({ action, ...payload })
     })
     return { data, error }
   } catch (err) {
@@ -263,6 +263,30 @@ export const updateUserEmail = async (userId, newEmail) => {
 }
 
 /**
+ * Update user password (admin only)
+ * @param {string} userId - Target user ID
+ * @param {string} newPassword - New password
+ * @returns {Promise<{success: boolean, error: any}>}
+ */
+export const updateUserPassword = async (userId, newPassword) => {
+  try {
+    const { error } = await callAdminUsersFunction('update-password', {
+      userId,
+      password: newPassword
+    })
+
+    if (error) {
+      return { success: false, error }
+    }
+
+    return { success: true, error: null }
+  } catch (error) {
+    console.error('Error updating user password:', error)
+    return { success: false, error }
+  }
+}
+
+/**
  * Set initial admin user (run once during setup)
  * @param {string} adminEmail - Email of the user to make admin
  * @returns {Promise<{success: boolean, error: any}>}
@@ -336,6 +360,7 @@ export default {
   updateUserRole,
   updateUserMetadata,
   updateUserEmail,
+  updateUserPassword,
   deleteUserAccount,
   getCurrentUserRole,
   isCurrentUserAdmin,

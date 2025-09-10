@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Users, Plus, Trash2, Edit, Shield, Mail, Lock, User } from 'lucide-react'
-import { getUsersWithRoles, createUserAccount, deleteUserAccount, updateUserRole } from '../lib/adminService'
+import { getUsersWithRoles, createUserAccount, deleteUserAccount, updateUserRole, updateUserPassword, updateUserMetadata, updateUserEmail } from '../lib/adminService'
 import { useAuth } from '../hooks/useAuth'
 
 const UserManagement = () => {
@@ -18,7 +18,8 @@ const UserManagement = () => {
   const [editFormData, setEditFormData] = useState({
     role: 'user',
     fullName: '',
-    email: ''
+    email: '',
+    password: ''
   })
   const [formErrors, setFormErrors] = useState({})
   const [editFormErrors, setEditFormErrors] = useState({})
@@ -70,6 +71,10 @@ const UserManagement = () => {
       errors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       errors.email = 'Please enter a valid email address';
+    }
+    
+    if (data.password && data.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
     }
     
     return errors;
@@ -216,7 +221,8 @@ const UserManagement = () => {
     setEditFormData({
       role: userData.role || 'user',
       fullName: userData.user_metadata?.full_name || '',
-      email: userData.email || ''
+      email: userData.email || '',
+      password: ''
     })
     setShowEditForm(true)
     setError('')
@@ -302,6 +308,20 @@ const UserManagement = () => {
         }
       }
       
+      // Update password if provided
+      if (editFormData.password && editFormData.password.trim()) {
+        try {
+          const passwordResult = await updateUserPassword(userId, editFormData.password);
+          if (passwordResult.error) {
+            errors.push('Failed to update user password');
+          } else {
+            updateCount++;
+          }
+        } catch (err) {
+          errors.push('Failed to update user password');
+        }
+      }
+      
       if (errors.length > 0) {
         setError(`Some updates failed: ${errors.join(', ')}`);
       } else if (updateCount > 0) {
@@ -311,7 +331,7 @@ const UserManagement = () => {
       }
       
       setEditingUser(null);
-      setEditFormData({ fullName: '', email: '', role: 'user' });
+      setEditFormData({ fullName: '', email: '', role: 'user', password: '' });
       setEditFormErrors({});
       setShowEditForm(false);
       fetchUsers();
@@ -590,19 +610,46 @@ const UserManagement = () => {
               </div>
             </div>
 
-            <div className="space-y-2 mb-6">
-              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                <Shield size={16} className="text-gray-500" />
-                Role
-              </label>
-              <select
-                className="w-full max-w-xs px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                value={editFormData.role}
-                onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Lock size={16} className="text-gray-500" />
+                  New Password (optional)
+                </label>
+                <input
+                  type="password"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 ${
+                    editFormErrors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                  value={editFormData.password}
+                  onChange={(e) => {
+                    setEditFormData({ ...editFormData, password: e.target.value });
+                    if (editFormErrors.password) {
+                      setEditFormErrors({...editFormErrors, password: ''});
+                    }
+                  }}
+                  placeholder="Enter new password (leave blank to keep current)"
+                  minLength={6}
+                />
+                {editFormErrors.password && (
+                  <div className="text-red-600 text-sm">{editFormErrors.password}</div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Shield size={16} className="text-gray-500" />
+                  Role
+                </label>
+                <select
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  value={editFormData.role}
+                  onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
             </div>
 
             <div className="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-600">
@@ -612,7 +659,7 @@ const UserManagement = () => {
                 onClick={() => {
                   setShowEditForm(false)
                   setEditingUser(null)
-                  setEditFormData({ role: 'user', fullName: '', email: '' })
+                  setEditFormData({ role: 'user', fullName: '', email: '', password: '' })
                   setEditFormErrors({})
                   setError('')
                 }}
@@ -671,13 +718,8 @@ const UserManagement = () => {
                             {initials}
                           </div>
                           <div className="min-w-0 flex-1">
-<<<<<<< HEAD
                             <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{fullName}</div>
                             <div className="text-sm text-gray-600 dark:text-gray-400 truncate">{userData.email}</div>
-=======
-                            <div className="text-sm font-medium  truncate" style={{color:'var(--color-text)'}}>{fullName}</div>
-                            <div className="text-sm truncate" style={{color:'var(--color-text)'}}>{userData.email}</div>
->>>>>>> 2260399
                           </div>
                         </div>
                       </td>
