@@ -678,8 +678,8 @@ const UserManagement = () => {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6">
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Existing Users</h3>
+      <div className="rounded-xl shadow-sm p-6" style={{backgroundColor: 'var(--color-card)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--color-border)'}}>
+        <h3 className="text-xl font-semibold mb-6" style={{color: 'var(--color-text)'}}>Existing Users</h3>
         
         {loading ? (
           <div className="text-center py-12">
@@ -718,22 +718,22 @@ const UserManagement = () => {
                             {initials}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{fullName}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400 truncate">{userData.email}</div>
+                            <div className="text-sm font-medium truncate" style={{color: 'var(--color-text)'}}>{fullName}</div>
+                            <div className="text-muted">{userData.email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        <span className={`role-badge ${
                           userData.role === 'admin' 
-                            ? 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400 border border-red-200 dark:border-red-800' 
-                            : 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 border border-blue-200 dark:border-blue-800'
+                            ? 'role-badge-admin' 
+                            : 'role-badge-user'
                         }`}>
                           {userData.role || 'user'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-muted">
                           {new Date(userData.created_at).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
@@ -745,14 +745,14 @@ const UserManagement = () => {
                         {isAdmin() && (
                         <div className="flex space-x-2">
                           <button
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 focus:ring-2 focus:ring-blue-500 transition-colors"
+                            className="btn-action btn-action-primary"
                             onClick={() => handleEditUser(userData)}
                           >
                             <Edit size={12} />
                             Edit
                           </button>
                           <button
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 focus:ring-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="btn-action btn-action-danger"
                             onClick={() => handleDeleteUser(userData.id)}
                             disabled={userData.id === user?.id}
                             title={userData.id === user?.id ? 'Cannot delete yourself' : 'Delete user'}

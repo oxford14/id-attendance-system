@@ -264,24 +264,24 @@ const AttendanceRecords = () => {
               onChange={handleFilterChange}
             />
           </div>
+        </div>
+        
+        <div className="button-row">
+          <button
+            onClick={clearFilters}
+            className="btn btn-secondary"
+          >
+            Clear Filters
+          </button>
           
-          <div className="form-group flex gap-2 items-end">
-            <button
-              onClick={clearFilters}
-              className="btn btn-secondary flex-1"
-            >
-              Clear Filters
-            </button>
-            
-            <button
-              onClick={exportToCSV}
-              className="btn btn-primary flex items-center gap-2 flex-1"
-              disabled={filteredRecords.length === 0}
-            >
-              <Download size={16} />
-              Export CSV
-            </button>
-          </div>
+          <button
+            onClick={exportToCSV}
+            className="btn btn-primary flex items-center gap-2"
+            disabled={filteredRecords.length === 0}
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
         </div>
       </div>
 
