@@ -10,6 +10,9 @@ const AttendanceScanner = () => {
   const [messageType, setMessageType] = useState('') // 'success', 'error', 'info'
   const [lastScannedStudent, setLastScannedStudent] = useState(null)
   const [recentScans, setRecentScans] = useState([])
+  const [sessionFilter, setSessionFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [recordsPerPage] = useState(5)
   const [showSuccessOverlay, setShowSuccessOverlay] = useState(false)
   const [showDuplicateOverlay, setShowDuplicateOverlay] = useState(false)
   const [duplicateMessage, setDuplicateMessage] = useState('')
@@ -390,18 +393,51 @@ const AttendanceScanner = () => {
 
       {/* Recent Scans Today */}
       <div className="card">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-          Today's Scans
-        </h2>
-        
-        {recentScans.length === 0 ? (
-          <div className='card text-center py-10 text-gray-600 dark:text-gray-400'>
-            <UserCheck size={48} className="mx-auto mb-4 opacity-50" />
-            <p>No scans today yet.</p>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Today's Scans
+          </h2>
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Filter by Session:
+            </label>
+            <select
+              value={sessionFilter}
+              onChange={(e) => setSessionFilter(e.target.value)}
+              className="px-3 py-1 text-sm border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+            >
+              <option value="all">All Sessions</option>
+              <option value="1">Session 1</option>
+              <option value="2">Session 2</option>
+            </select>
           </div>
-        ) : (
-          <div className="grid gap-3" style={{ backgroundColor: 'var(--color-background)' }}>
-            {recentScans.map((scan) => (
+        </div>
+        
+        {(() => {
+           const filteredScans = sessionFilter === 'all' 
+             ? recentScans 
+             : recentScans.filter(scan => (scan.session_number || 1).toString() === sessionFilter)
+           
+           // Pagination logic
+           const totalPages = Math.ceil(filteredScans.length / recordsPerPage)
+           const startIndex = (currentPage - 1) * recordsPerPage
+           const endIndex = startIndex + recordsPerPage
+           const currentScans = filteredScans.slice(startIndex, endIndex)
+           
+           // Reset to page 1 when filter changes
+           React.useEffect(() => {
+             setCurrentPage(1)
+           }, [sessionFilter])
+           
+           return filteredScans.length === 0 ? (
+             <div className='card text-center py-10 text-gray-600 dark:text-gray-400'>
+               <UserCheck size={48} className="mx-auto mb-4 opacity-50" />
+               <p>{sessionFilter === 'all' ? 'No scans today yet.' : `No Session ${sessionFilter} scans today yet.`}</p>
+             </div>
+           ) : (
+             <>
+               <div className="grid gap-3" style={{ backgroundColor: 'var(--color-background)' }}>
+                 {currentScans.map((scan) => (
               <div 
                 key={scan.id} 
                 className="flex justify-between items-center p-4 rounded-lg border"
@@ -451,9 +487,50 @@ const AttendanceScanner = () => {
                 </div>
               </div>
             ))}
-          </div>
-        )}
-      </div>
+              </div>
+              
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center space-x-2 mt-6">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+                  >
+                    Previous
+                  </button>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-2 text-sm font-medium border ${
+                        currentPage === page
+                          ? 'bg-blue-50 border-blue-500 text-blue-600 dark:bg-blue-900 dark:border-blue-400 dark:text-blue-300'
+                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+              
+              {/* Pagination Info */}
+              <div className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+                Showing {startIndex + 1}-{Math.min(endIndex, filteredScans.length)} of {filteredScans.length} records
+              </div>
+            </>
+          )})()}
+        </div>
     </div>
   )
 }
