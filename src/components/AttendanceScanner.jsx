@@ -30,9 +30,27 @@ const AttendanceScanner = () => {
       const today = new Date().toISOString().split('T')[0]
       const todayScans = data?.filter(record => 
         record.created_at.startsWith(today)
-      ).slice(0, 5) || []
+      ) || []
       
-      setRecentScans(todayScans)
+      // Group by student and sort by session_number
+      const groupedScans = todayScans.reduce((acc, scan) => {
+        const key = scan.learner_reference_number
+        if (!acc[key]) {
+          acc[key] = []
+        }
+        acc[key].push(scan)
+        return acc
+      }, {})
+      
+      // Sort sessions within each student group and flatten
+      const sortedScans = Object.values(groupedScans)
+        .map(studentScans => 
+          studentScans.sort((a, b) => (a.session_number || 1) - (b.session_number || 1))
+        )
+        .flat()
+        .slice(0, 10) // Show more records to accommodate multiple sessions
+      
+      setRecentScans(sortedScans)
     } catch (err) {
       console.error('Error loading recent scans:', err)
     }
@@ -395,6 +413,9 @@ const AttendanceScanner = () => {
                 <div>
                   <h4 className="font-semibold mb-1 text-gray-900 dark:text-gray-100">
                     {scan.student_profile?.first_name} {scan.student_profile?.last_name}
+                    <span className="ml-2 px-2 py-1 text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">
+                      Session {scan.session_number || 1}
+                    </span>
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">
                     Grade {scan.grade_level} • RF ID: {scan.rfid_tag}
