@@ -374,11 +374,25 @@ const UserManagement = () => {
   }
 
   return (
+<<<<<<<<< Temporary merge branch 1
+=========
+<<<<<<< HEAD
+    <div className="container" style={{ padding: '40px 20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <div>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' }}>
+            <Users size={32} style={{ color: '#3b82f6' }} />
+=======
+>>>>>>>>> Temporary merge branch 2
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
         <div className="mb-4 sm:mb-0">
           <h1 className="flex items-center gap-3">
             <Users size={32} className="text-blue-600" />
+<<<<<<<<< Temporary merge branch 1
+=========
+>>>>>>> 2260399 (Side Menu Bar and Light and Dark Theme)
+>>>>>>>>> Temporary merge branch 2
             User Management
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-lg">Manage system users and their permissions</p>
@@ -549,10 +563,10 @@ const UserManagement = () => {
         </div>
       )}
 
-
-      {showEditForm && editingUser && isAdmin() && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 p-6 mb-8">
-          <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 dark:text-white mb-6">
+<<<<<<<<< Temporary merge branch 1
+      {showEditForm && editingUser && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="flex items-center gap-2 text-xl font-semibold text-gray-900 mb-6">
             <Edit size={20} className="text-blue-600" />
             Edit User: {editingUser.email}
           </div>
@@ -678,8 +692,13 @@ const UserManagement = () => {
         </div>
       )}
 
-      <div className="rounded-xl shadow-sm p-6" style={{backgroundColor: 'var(--color-card)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--color-border)'}}>
-        <h3 className="text-xl font-semibold mb-6" style={{color: 'var(--color-text)'}}>Existing Users</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Existing Users</h3>
+=========
+<<<<<<< HEAD
+      <div className="card">
+        <h3 style={{ marginBottom: '20px' }}>Existing Users</h3>
+>>>>>>>>> Temporary merge branch 2
         
         {loading ? (
           <div className="text-center py-12">
@@ -702,6 +721,37 @@ const UserManagement = () => {
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Created</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{isAdmin() ? 'Actions' : ''}</th>
                   </tr>
+<<<<<<<<< Temporary merge branch 1
+=========
+                ))}
+              </tbody>
+            </table>
+=======
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Existing Users</h3>
+        
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400">Loading users...</p>
+          </div>
+        ) : users.length === 0 ? (
+          <div className="text-center py-12">
+            <Users size={48} className="text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500 dark:text-gray-400">No users found</p>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">User</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">{isAdmin() ? 'Actions' : ''}</th>
+                  </tr>
+>>>>>>>>> Temporary merge branch 2
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
                 {users.map((userData) => {
@@ -769,6 +819,10 @@ const UserManagement = () => {
                 </tbody>
               </table>
             </div>
+<<<<<<<<< Temporary merge branch 1
+=========
+>>>>>>> 2260399 (Side Menu Bar and Light and Dark Theme)
+>>>>>>>>> Temporary merge branch 2
           </div>
         )}
       </div>
