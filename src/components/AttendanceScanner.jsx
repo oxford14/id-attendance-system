@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { db, supabase } from '../lib/supabase'
 import { notificationService } from '../lib/notificationService'
+import SemaphoreSmsService from '../lib/semaphoreSmsService'
 import { Scan, UserCheck, AlertCircle, CheckCircle, Bell, AlertTriangle } from 'lucide-react'
 
 const AttendanceScanner = () => {
@@ -149,8 +150,8 @@ const AttendanceScanner = () => {
       // Reload recent scans
       await loadRecentScans()
       
-      // TODO: Send notification to parent
-      await sendParentNotification(student)
+      // Send notification to parent via CloudSMS
+      await sendParentNotification(student, scanMode)
       
     } catch (err) {
       setMessage('Error processing scan. Please try again.')
@@ -168,15 +169,21 @@ const AttendanceScanner = () => {
     }
   }
 
-  const sendParentNotification = async (student) => {
+  const sendParentNotification = async (student, scanType) => {
     try {
-      const result = await notificationService.sendAttendanceNotification(student)
+      // Send SMS via Semaphore
+      const semaphoreSmsService = new SemaphoreSmsService()
+      const smsResult = await semaphoreSmsService.sendAttendanceNotification(student, scanType)
       
-      if (result.success) {
-        console.log(`✅ Notification sent successfully for ${student.first_name} ${student.last_name}`)
-        
-        // Show notification status to user
-        const notificationTypes = result.results
+      // Also try existing notification service as backup
+      const backupResult = await notificationService.sendAttendanceNotification(student)
+      
+      if (smsResult.success) {
+        console.log(`✅ CloudSMS sent successfully for ${student.first_name} ${student.last_name}`)
+        setMessage(prev => `${prev} Parent notified via SMS.`)
+      } else if (backupResult.success) {
+        console.log(`✅ Backup notification sent for ${student.first_name} ${student.last_name}`)
+        const notificationTypes = backupResult.results
           .filter(r => r.success)
           .map(r => r.type)
           .join(' and ')
@@ -185,7 +192,9 @@ const AttendanceScanner = () => {
           setMessage(prev => `${prev} Parent notified via ${notificationTypes}.`)
         }
       } else {
-        console.warn(`⚠️ Notification failed for ${student.first_name} ${student.last_name}:`, result.error)
+        console.warn(`⚠️ All notifications failed for ${student.first_name} ${student.last_name}`)
+        console.warn('CloudSMS error:', smsResult.error)
+        console.warn('Backup error:', backupResult.error)
       }
     } catch (error) {
       console.error('Notification error:', error)

@@ -1,12 +1,13 @@
 // Parent Notification Service
 // Handles email and SMS notifications when students scan their RFID
 
+import SemaphoreSmsService from './semaphoreSmsService.js';
+
 class NotificationService {
   constructor() {
     this.emailApiKey = import.meta.env.VITE_EMAIL_SERVICE_API_KEY
-    this.smsApiKey = import.meta.env.VITE_SMS_SERVICE_API_KEY
     this.emailServiceUrl = 'https://api.emailjs.com/api/v1.0/email/send' // Example: EmailJS
-    this.smsServiceUrl = 'https://api.twilio.com/2010-04-01/Accounts' // Example: Twilio
+    this.semaphoreSmsService = new SemaphoreSmsService()
   }
 
   /**
@@ -29,11 +30,12 @@ class NotificationService {
         results.push({ type: 'email', success: emailResult.success, error: emailResult.error })
       }
 
-      // Send SMS notification if parent has phone
-      if (student.parent_phone && this.smsApiKey) {
-        const smsResult = await this.sendSMS(
-          student.parent_phone,
-          message.sms
+      // Send SMS notification if guardian has phone
+      if (student.guardian_contact_number) {
+        const smsResult = await this.semaphoreSmsService.sendAttendanceNotification(
+          student,
+          'time_in',
+          new Date(timestamp)
         )
         results.push({ type: 'sms', success: smsResult.success, error: smsResult.error })
       }
@@ -123,45 +125,7 @@ class NotificationService {
     }
   }
 
-  /**
-   * Send SMS notification using Twilio or similar service
-   */
-  async sendSMS(to, message) {
-    if (!this.smsApiKey) {
-      console.warn('SMS API key not configured')
-      return { success: false, error: 'SMS service not configured' }
-    }
 
-    try {
-      // Example implementation for Twilio
-      // Replace with your preferred SMS service
-      const accountSid = 'your_account_sid'
-      const authToken = this.smsApiKey
-      const fromNumber = 'your_twilio_number'
-
-      const response = await fetch(`${this.smsServiceUrl}/${accountSid}/Messages.json`, {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + btoa(`${accountSid}:${authToken}`),
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          From: fromNumber,
-          To: to,
-          Body: message
-        })
-      })
-
-      if (response.ok) {
-        return { success: true }
-      } else {
-        throw new Error(`SMS service responded with status: ${response.status}`)
-      }
-    } catch (error) {
-      console.error('SMS sending failed:', error)
-      return { success: false, error: error.message }
-    }
-  }
 
   /**
    * Test notification configuration
@@ -173,8 +137,8 @@ class NotificationService {
         service: 'EmailJS (or your preferred service)'
       },
       sms: {
-        configured: !!this.smsApiKey,
-        service: 'Twilio (or your preferred service)'
+        configured: !!this.semaphoreSmsService.apiKey,
+        service: 'Semaphore SMS Service'
       }
     }
 
